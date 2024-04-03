@@ -2,39 +2,72 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
+	"golang.org/x/crypto/bcrypt"
 )
-
-type album struct {
-	ID     string  `json:"id"`
-	Title  string  `json:"title"`
-	Artist string  `json:"artist"`
-	Price  float64 `json:"price"`
-}
 
 var db *sql.DB
 
-var albums = []album{
-	{ID: "1", Title: "Blue Train", Artist: "John Coltrane", Price: 56.99},
-	{ID: "2", Title: "Jeru", Artist: "Gerry Mulligan", Price: 17.99},
-	{ID: "3", Title: "Sarah Vaughan and Clifford Brown", Artist: "Sarah Vaughan", Price: 39.99},
-}
-
 func main() {
 	var err error
-	db, err = sql.Open("postgres", "postgres://postgres:postgres@localhost/mydb?sslmode=disable")
+
+	DB := "user=postgres_user password=postgres_password dbname=postgres_db port=5432 sslmode=disable"
+
+	db, err = sql.Open("postgres", DB)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.Close()
+
 	router := gin.Default()
-	router.GET("/login", logIn)
-	router.Run("localhost:8081")
+	router.LoadHTMLGlob("templates/*")
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(
+			http.StatusOK,
+			"index.html",
+			gin.H{
+				"title": "Home Page",
+			},
+		)
+	})
+	router.POST("/signup", signup)
+	router.Run("localhost:8080")
 }
 
-func logIn(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, albums)
+func signup(c *gin.Context) {
+	// c.IndentedJSON(http.StatusOK, albums)
+	var user struct {
+		Email    string
+		Password string
+	}
+
+	user.Email = c.PostForm("email")
+	user.Password = c.PostForm("password")
+
+	if c.Bind(&user) != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to read body",
+		})
+		return
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to hash password",
+		})
+		return
+	}
+	result, err := db.Exec("insert into Users (email, password) values ($1, $2)",
+		user.Email, string(hash))
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(result.RowsAffected())
+	// user := models.User{Email: body.Email, Password: string(hash)}
 }
