@@ -2,6 +2,8 @@
 
 ### Steps 
 
+Clone the repo
+
 Rename the .env.example file to .env
 
 Run the command `go run db/migrate/migrate.go` 
