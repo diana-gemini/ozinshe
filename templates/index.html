@@ -1,74 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <style>
-        body {
-            background-color: #001f3f; /* Dark Blue */
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-            color: white;
-        }
-        #login-form {
-            background-color: #001f3f; /* Dark Blue */
-            padding: 20px;
-            border-radius: 10px;
-            width: 300px;
-           
-        }
-        input[type="text"],
-        input[type="password"],
-        button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: none;
-            border-radius: 5px;
-        }
-        input[type="text"],
-        input[type="password"] {
-            background-color: #6c7b8b; /* Grey-Blue */
-        }
-        input[type="text"]::placeholder,
-        input[type="password"]::placeholder {
-            color: white;
-           
-        }
-        button {
-            background-color: #800080; /* Purple */
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-            border-radius: 5px;
-        }
-        .register-link {
-            color: #800080; /* Purple */
-            font-weight: bold;
-            font-size: 10pt;
-            text-decoration: none;
-        }
-    </style>
-</head>
+{{template "base" .}}
+
 <body>
-    <div id="login-form">
-        <form class="form" action="/signup" method="POST">
-        <h2 style="font-size: 16pt; font-weight: bold; color: white;">Сәлем</h2>
-        <h3 style="font-size: 8pt; color: white;">Аккаунтқа кіріңіз</h3>
-        <h4 style="font-size: 10pt; font-weight: bold; color: white; margin-block-end: 2px;">Email</h4>
-        <input type="text" style="width: 100%;" name="email" placeholder="Сіздің email">
-        <h4 style="font-size: 10pt; font-weight: bold; color: white; margin-block-end: 2px;">Құпия сөз</h4>
-        <input type="password"  style="width: 100%; color: purple;" name="password" placeholder="Сіздің құпия сөзіңіз">
-        <p style="text-align: right; font-weight: bold; font-size: 10pt;"><a href="#" class="register-link">Құпия сөзді ұмыттыңыз ба?</a></p>
-        <button type="submit" style="width: 100%;">Кіру</button>
-        <p style="text-align: center; font-weight: bold; color: white; font-size: 10pt;">Аккаунтыныз жоқ па? <a href="#" class="register-link">Тіркелу</a></p>
-        </form>
+  {{$logged:=.IsLoggedin}}
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">API</a>
+      </div>
+
+      <ul class="nav navbar-nav navbar-right">
+        {{if $logged}}
+        <!-- <li><a href="/editprofile"> Жеке деректер </a></li> -->
+        <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Шығу</a></li>
+        {{else}}
+        <li><a href="/signup"><span class="glyphicon glyphicon-user"></span> Тіркелу</a></li>
+        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Кіру</a></li>
+        {{end}}
+      </ul>
     </div>
+  </nav>
+ 
 </body>
+
 </html>

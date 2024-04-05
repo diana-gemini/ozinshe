@@ -1,0 +1,22 @@
+{{template "base" .}}
+
+<body>
+  <div class="Err">
+
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">API</a>
+        </div>
+      </div>
+    </nav>
+
+
+    <div id="main">
+      <div class="fof">
+        <h1>{{.StatusCode}} {{.StatusText}}</h1>
+      </div>
+    </div>
+  </div>
+
+</body>

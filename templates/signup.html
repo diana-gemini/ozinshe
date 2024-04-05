@@ -1,0 +1,63 @@
+{{template "base" .}}
+
+<body>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">API</a>
+      </div>
+    </div>
+  </nav>
+ 
+  <div class="container" style="color: white; ">
+    <form method="post">
+    <h2 style="color: white; "> Тіркелу</h2>
+    <p style="color: rgb(177, 173, 173); ">Деректерді толтырыңыз</p>
+                   
+        <div class="form-group" >
+            <label for="email" >Email</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="Сіздің email" 
+            style="background-color:  rgb(31, 31, 59);color:white;" required>
+
+        </div>
+
+        <div class="form-group">
+          <label for="password" >Құпия сөз</label>
+          <input type="password" id="password" name="password" class="form-control"  placeholder="Сіздің құпия сөзіңіз" 
+           minlength="4" style="background-color:  rgb(31, 31, 59);color:white;" required>
+          {{if .Pass1}}
+        <div class="alert alert-warning">
+          {{.Pass1}}
+        </div>
+        {{end}}
+        
+        </div>
+        <div class="form-group">
+          <label for="password2" >Құпия сөзді қайталаңыз</label>
+          <input type="password" name="password2" class="form-control" placeholder="Сіздің құпия сөзіңіз" 
+          id="password2" minlength="4" style="background-color:  rgb(31, 31, 59); color:white;" required>
+        </div>
+        {{if .Email}}
+          <p style="color:red;">Мұңдай email-ы бар пайдаланушы тіркелген</p>
+        {{end}}
+        {{if .Pass2}}
+        <p style="color:red;">Құпия сөздер сәйкес келмейді</p>
+        {{end}}
+
+
+        <input class="form-control" type="submit" value="Тіркелу" 
+        style="background-color: rgb(136, 25, 226); color:white; font-weight: bold; "> 
+        <br>
+        <p style="text-align: center; font-weight: bold; color: white;" >Сізде аккаунт бар ма? 
+          <a href="/login" style="color: rgb(136, 25, 226);"> Кіру</a> </p>
+        
+
+    </form>
+  </div>
+ 
+  
+
+
+</body>
+
+</html>

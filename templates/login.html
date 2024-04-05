@@ -1,0 +1,59 @@
+{{template "base" .}}
+
+<body>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">API</a>
+      </div>
+    </div>
+  </nav>
+   
+  
+  <div class="container" style="color: white; ">
+    <form method="POST" >
+      
+      <h2 style="color: white; "> Сәлем</h2>
+      <p style="color: rgb(177, 173, 173); ">Аккаунтқа кіріңіз</p>
+       
+        
+        <div class="form-group">
+          <label for="username">Email</label>
+          <input type="text" name="email" class="form-control" id="email" maxlength="20" placeholder="Сіздің email"
+          style="background-color:  rgb(31, 31, 59);color:white;" required>
+          
+        </div>
+
+        {{if .Email}}
+        
+        <p style="color:red;">Қате формат</p>
+        
+        {{end}}
+
+        <div class="form-group">
+          <label for="password">Құпия сөз</label>
+          <input type="password" name="password" class="form-control" id="password" placeholder="Сіздің құпия сөзіңіз" 
+          style="background-color:  rgb(31, 31, 59);color:white;" required>
+          <br>
+          <p style="text-align: right; font-weight: bold; color: white;" > 
+            <a href="" style="color: rgb(136, 25, 226);"> Құпия сөзді ұмыттыңыз ба?</a> </p>
+        </div>
+        <!-- {{if .Email}}
+          <p style="color:red;">Email немесе құпия сөз сәйкес келмейді</p>
+        {{end}}
+        {{if .Pass1}}
+        <p style="color:red;">Email немесе құпия сөз сәйкес келмейді</p>
+        {{end}} -->
+        <br>
+        <input type="submit" value="Кіру" class="form-control" style="background-color: rgb(136, 25, 226); color:white; font-weight: bold;">
+        <br>
+        <p style="text-align: center; font-weight: bold; color: white;" >Аккаунтыныз жоқ па? 
+          <a href="/signup" style="color: rgb(136, 25, 226);"> Тіркелу</a> </p>
+
+    </form>
+   
+    
+  </div>
+  
+</body>
+</html>
