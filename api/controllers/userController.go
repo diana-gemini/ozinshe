@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"ozinshe/db/initializers"
-	format_errors "ozinshe/internal/format-errors"
 	"ozinshe/internal/models"
 	"ozinshe/internal/validations"
 
@@ -17,23 +16,29 @@ import (
 
 func Signup(c *gin.Context) {
 	var userInput struct {
-		Email    string `json:"email" binding:"required,email"`
-		Password string `json:"password" binding:"required,min=4"`
+		Email          string `json:"email" binding:"required,email"`
+		Password       string `json:"password" binding:"required,min=4"`
+		RepeatPassword string `json:"passwordrepeat" binding:"required,min=4"`
 	}
 
-	userInput.Email = c.PostForm("email")
-	userInput.Password = c.PostForm("password")
-	errs := models.ErrText{}
-
-	if validations.IsUniqueValue("users", "email", userInput.Email) {
-		errs.Email = "Email already exists"
-		c.HTML(http.StatusBadRequest, "signup.html", errs)
+	if err := c.ShouldBindJSON(&userInput); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
-	if !CheckPassword(c) {
-		errs.Pass2 = "Passwords should be the same"
-		c.HTML(http.StatusBadRequest, "signup.html", errs)
+	if validations.IsUniqueValue("users", "email", userInput.Email) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Email": "The email is already exist!",
+		})
+		return
+	}
+
+	if !CheckPassword(userInput.Password, userInput.RepeatPassword) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Password": "Passwords should be the same",
+		})
 		return
 	}
 
@@ -54,10 +59,14 @@ func Signup(c *gin.Context) {
 	result := initializers.DB.Create(&user)
 
 	if result.Error != nil {
-		format_errors.InternalServerError(c)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Internal server error",
+		})
 		return
 	}
-	c.Redirect(http.StatusSeeOther, "/login")
+	c.JSON(http.StatusOK, gin.H{
+		"user": user,
+	})
 }
 
 func Login(c *gin.Context) {
@@ -66,23 +75,28 @@ func Login(c *gin.Context) {
 		Password string `json:"password" binding:"required"`
 	}
 
-	userInput.Email = c.PostForm("email")
-	userInput.Password = c.PostForm("password")
+	if c.ShouldBindJSON(&userInput) != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to read body",
+		})
+		return
+	}
 
 	var user models.User
-	errs := models.ErrText{}
 	initializers.DB.First(&user, "email = ?", userInput.Email)
 
 	if user.ID == 0 {
-		errs.Email = "email not found"
-		c.HTML(http.StatusBadRequest, "login.html", errs)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid email or password",
+		})
 		return
 	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userInput.Password))
 	if err != nil {
-		errs.Email = "Invalid email or password"
-		c.HTML(http.StatusBadRequest, "login.html", errs)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid email or password",
+		})
 		return
 	}
 
@@ -100,22 +114,22 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	auth := models.WebPage{}
-	auth.IsLoggedin = true
-
 	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, true)
-	c.Redirect(http.StatusSeeOther, "/")
-	c.HTML(http.StatusOK, "index.html", auth)
+	c.JSON(http.StatusOK, gin.H{
+		"Authorization": tokenString,
+	})
 }
 
 func Logout(c *gin.Context) {
 	c.SetCookie("Authorization", "", 0, "", "", false, true)
-	c.HTML(http.StatusOK, "index.html", gin.H{})
+
+	c.JSON(http.StatusOK, gin.H{
+		"successMessage": "Logout successful",
+	})
 }
 
-func CheckPassword(c *gin.Context) bool {
-	password := c.PostForm("password")
+func CheckPassword(password, passwordrepeat string) bool {
 	if password == "" {
 		return false
 	}
@@ -125,18 +139,17 @@ func CheckPassword(c *gin.Context) bool {
 	if len(password) > 50 {
 		return false
 	}
-	if PasswordRepeat(c, password) {
+	if PasswordRepeat(password, passwordrepeat) {
 		return true
 	}
 	return false
 }
 
-func PasswordRepeat(c *gin.Context, firstPass string) bool {
-	repeatPassword := c.PostForm("password2")
-	if repeatPassword == "" {
+func PasswordRepeat(password, passwordrepeat string) bool {
+	if passwordrepeat == "" {
 		return false
 	}
-	if firstPass != repeatPassword {
+	if password != passwordrepeat {
 		return false
 	}
 	return true
