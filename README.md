@@ -10,8 +10,10 @@ Run the command `go run db/migrate/migrate.go`
 
 Run the project using the command `go run main.go`
 
+Test routes in Postman
+
 ### Routes
-1. http://localhost:3000/signup
+1. http://localhost:3000/signup - Signup user
 ```json
 {
     "email": "di@mail.ru",
@@ -19,37 +21,75 @@ Run the project using the command `go run main.go`
     "passwordrepeat": "1478"
 }
 ```
-2. http://localhost:3000/login
+2. http://localhost:3000/login - Login user
 ```json
 {
     "email": "di@mail.ru",
     "password": "1478"
 }
 ```
-3. http://localhost:3000/logout
-4. http://localhost:3000/login
+3. http://localhost:3000/logout - Logout
+4. http://localhost:3000/login - Login Admin
 ```json
 {
     "email": "admin@mail.ru",
     "password": "Project2024&^!@"
 }
 ```
-5. http://localhost:3000/movie/create
+5. http://localhost:3000/movie/create - Create movie only for Admin
 ```json
-{
-    "NameOfProject": "Superkolik samuryk",
-	"Category":      "Telekhikaya, Multserial",
-	"TypeOfProject": "Serial",
-	"AgeCategory":   "8-10, 10-12",
-	"Year":          "2020",
-	"Timing":        "7",
-	"Keywords":      "Tachka, Avto, Mult",
-	"Description":   "Shytyrman ogigaly multserial...",
-	"Director":      "Bakdaulet Alembekov",
-	"Producer":      "Sandugash Kenzhebaeva",
-    "CountOfSeason": {"1": ["vPQy7H-i3ww", "F_p7ePt17J4"], "2": ["dz8ET0_yzOM"]},
-	"Cover":    "image link",
-	"Screenshots":   ["image link 1","image link 2","image link 3"]
-}
+    {
+        "NameOfProject": "Superkolik samuryk",
+        "Category":      "Telekhikaya, Multserial",
+        "TypeOfProject": "Serial",
+        "AgeCategory":   "8-10, 10-12",
+        "Year":          "2020",
+        "Timing":        "7",
+        "Keywords":      "Tachka, Avto, Mult",
+        "Description":   "Shytyrman ogigaly multserial...",
+        "Director":      "Bakdaulet Alembekov",
+        "Producer":      "Sandugash Kenzhebaeva",
+        "CountOfSeason": [
+    {
+      "season": "1",
+      "linkOfSeries": ["vPQy7H-i3ww", "F_p7ePt17J4"]
+    },
+    {
+      "season": "2",
+      "linkOfSeries": ["dz8ET0_yzOM"]
+    }
+  ],
+        "Cover":    "image link",
+        "Screenshots":   ["image link 1","image link 2","image link 3"]
+    }
 ```
+6. http://localhost:3000/movie/1/edit - Edit movie only for Admin
+7. http://localhost:3000/movie/1/update - Update movie only for Admin
+```json
+    {
+        "NameOfProject": "Superkolik samuryk new",
+        "Category":      "Telekhikaya, Multserial",
+        "TypeOfProject": "Serial",
+        "AgeCategory":   "8-10, 10-12",
+        "Year":          "2020",
+        "Timing":        "7",
+        "Keywords":      "Tachka, Avto, Mult",
+        "Description":   "Shytyrman ogigaly multserial...",
+        "Director":      "Bakdaulet Alembekov",
+        "Producer":      "Sandugash Kenzhebaeva",
+        "CountOfSeason": [
+    {
+      "season": "1",
+      "linkOfSeries": ["vPQy7H-i3ww", "F_p7ePt17J4"]
+    },
+    {
+      "season": "2",
+      "linkOfSeries": ["dz8ET0_yzOM"]
+    }
+  ],
+        "Cover":    "image link",
+        "Screenshots":   ["image link 1","image link 2","image link 3"]
+    }
+```
+8. http://localhost:3000/movie/1/delete - Delete movie only for Admin
    
