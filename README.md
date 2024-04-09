@@ -36,7 +36,7 @@ Test routes in Postman (my collection in Postman - https://speeding-flare-870218
     "password": "Project2024&^!@"
 }
 ```
-5. http://localhost:3000/movie/create - Create movie only for Admin
+5.1. http://localhost:3000/movie/create - Create movie (serial) only for Admin
 ```json
     {
         "NameOfProject": "Superkolik samuryk",
@@ -57,6 +57,29 @@ Test routes in Postman (my collection in Postman - https://speeding-flare-870218
     {
       "season": "2",
       "linkOfSeries": ["dz8ET0_yzOM"]
+    }
+  ],
+        "Cover":    "image link",
+        "Screenshots":   ["image link 1","image link 2","image link 3"]
+    }
+```
+5.2. http://localhost:3000/movie/create - Create movie (film) only for Admin
+```json
+    {
+        "NameOfProject": "Name of film",
+        "Category":      "Multfilm",
+        "TypeOfProject": "Film",
+        "AgeCategory":   "8-10, 10-12",
+        "Year":          "2020",
+        "Timing":        "7",
+        "Keywords":      "Tachka, Avto, Mult",
+        "Description":   "Shytyrman ogigaly multserial...",
+        "Director":      "Bakdaulet Alembekov",
+        "Producer":      "Sandugash Kenzhebaeva",
+        "CountOfSeason": [
+    {
+      "season": "1",
+      "linkOfSeries": ["vPQy7H-i3ww"]
     }
   ],
         "Cover":    "image link",
