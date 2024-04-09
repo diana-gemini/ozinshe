@@ -2,18 +2,20 @@ package middleware
 
 import (
 	"fmt"
-	"ozinshe/db/initializers"
-	"ozinshe/internal/models"
-	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"net/http"
 	"os"
+	"ozinshe/db/initializers"
+	"ozinshe/internal/models"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type AuthUser struct {
 	ID    uint   `json:"ID"`
 	Email string `json:"Email"`
+	Role  uint   `json:"Role"`
 }
 
 func RequireAuth(c *gin.Context) {
@@ -55,11 +57,42 @@ func RequireAuth(c *gin.Context) {
 		authUser := AuthUser{
 			ID:    user.ID,
 			Email: user.Email,
+			Role:  user.RoleID,
 		}
 
 		c.Set("authUser", authUser)
 		c.Next()
 	} else {
 		c.AbortWithStatus(http.StatusUnauthorized)
+	}
+}
+
+func IsAdmin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authUser, exists := c.Get("authUser")
+		if !exists {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error": "Failed to get the user",
+			})
+			return
+		}
+
+		user, ok := authUser.(AuthUser)
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error": "Unauthorized",
+			})
+			return
+		}
+		// authUserRole := helpers.GetAuthUser(c).Role
+		// fmt.Printf("email - %v, roleID - %v", user.Email, user.Role)
+		if user.Role != 1 {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+				"error": "Forbidden",
+			})
+			return
+		}
+
+		c.Next()
 	}
 }

@@ -17,3 +17,4 @@ func ConnectDB() {
 		panic("Database connection failed!")
 	}
 }
+

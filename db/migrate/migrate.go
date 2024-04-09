@@ -1,11 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
 
 	"ozinshe/config"
 	"ozinshe/db/initializers"
 	"ozinshe/internal/models"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func init() {
@@ -14,14 +18,36 @@ func init() {
 }
 
 func main() {
-	err := initializers.DB.Migrator().DropTable(models.User{})
+	err := initializers.DB.Migrator().DropTable(models.User{}, models.Movie{})
 	if err != nil {
 		log.Fatal("Table dropping failed")
 	}
 
-	err = initializers.DB.AutoMigrate(models.User{})
+	err = initializers.DB.AutoMigrate(models.User{}, models.Movie{})
 
 	if err != nil {
 		log.Fatal("Migration failed")
+	}
+
+	CreateAdmin()
+}
+
+func CreateAdmin() {
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(os.Getenv("ADMIN_PASSWORD")), 10)
+	if err != nil {
+		fmt.Println("Failed to hash admin assword")
+		return
+	}
+	admin := models.User{
+		Email:    os.Getenv("ADMIN_EMAIL"),
+		Password: string(hashPassword),
+		RoleID:   1,
+	}
+
+	result := initializers.DB.Create(&admin)
+
+	if result.Error != nil {
+		fmt.Println("Internal server error")
+		return
 	}
 }

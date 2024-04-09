@@ -18,6 +18,6 @@ func main() {
 	fmt.Println("Hello auth")
 	r := gin.Default()
 	router.GetRoute(r)
-
 	r.Run()
+
 }

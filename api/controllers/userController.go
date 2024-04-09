@@ -54,6 +54,7 @@ func Signup(c *gin.Context) {
 	user := models.User{
 		Email:    userInput.Email,
 		Password: string(hashPassword),
+		RoleID:   2,
 	}
 
 	result := initializers.DB.Create(&user)
