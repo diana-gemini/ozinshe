@@ -6,6 +6,7 @@ import (
 	"os"
 	"ozinshe/db/initializers"
 	"ozinshe/internal/models"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -19,9 +20,15 @@ type AuthUser struct {
 }
 
 func RequireAuth(c *gin.Context) {
-	tokenString, err := c.Cookie("Authorization")
+	var tokenString string
+	tokenArray := strings.Split(c.GetHeader("Authorization"), " ")
 
-	if err != nil {
+	if len(tokenArray) >= 2 {
+		tokenString = tokenArray[1]
+		if tokenString == "" {
+			c.AbortWithStatus(http.StatusUnauthorized)
+		}
+	} else {
 		c.AbortWithStatus(http.StatusUnauthorized)
 	}
 
@@ -84,8 +91,7 @@ func IsAdmin() gin.HandlerFunc {
 			})
 			return
 		}
-		// authUserRole := helpers.GetAuthUser(c).Role
-		// fmt.Printf("email - %v, roleID - %v", user.Email, user.Role)
+
 		if user.Role != 1 {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
 				"error": "Forbidden",

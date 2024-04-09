@@ -35,7 +35,7 @@ func Signup(c *gin.Context) {
 		return
 	}
 
-	if !CheckPassword(userInput.Password, userInput.RepeatPassword) {
+	if !validations.CheckPassword(userInput.Password, userInput.RepeatPassword) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Password": "Passwords should be the same",
 		})
@@ -115,43 +115,13 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	c.SetSameSite(http.SameSiteLaxMode)
-	c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, true)
 	c.JSON(http.StatusOK, gin.H{
-		"Authorization": tokenString,
+		"token": tokenString,
 	})
 }
 
 func Logout(c *gin.Context) {
-	c.SetCookie("Authorization", "", 0, "", "", false, true)
-
 	c.JSON(http.StatusOK, gin.H{
 		"successMessage": "Logout successful",
 	})
-}
-
-func CheckPassword(password, passwordrepeat string) bool {
-	if password == "" {
-		return false
-	}
-	if len(password) < 4 {
-		return false
-	}
-	if len(password) > 50 {
-		return false
-	}
-	if PasswordRepeat(password, passwordrepeat) {
-		return true
-	}
-	return false
-}
-
-func PasswordRepeat(password, passwordrepeat string) bool {
-	if passwordrepeat == "" {
-		return false
-	}
-	if password != passwordrepeat {
-		return false
-	}
-	return true
 }
