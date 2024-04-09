@@ -92,4 +92,10 @@ Test routes in Postman
     }
 ```
 8. http://localhost:3000/movie/1/delete - Delete movie only for Admin
+9. http://localhost:3000/all - Get all movies
+10. http://localhost:3000/movie/1 - Get movie by ID
+11. http://localhost:3000/movie/1/series/1/2 - Get series by ID
+12. http://localhost:3000/trends - Get trends
+13. http://localhost:3000/newprojects - Get new projects
+14. http://localhost:3000/telehikaya - Get telehikaya
    
