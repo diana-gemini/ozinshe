@@ -121,4 +121,5 @@ Test routes in Postman (my collection in Postman - https://speeding-flare-870218
 12. http://localhost:3000/trends - Get trends
 13. http://localhost:3000/newprojects - Get new projects
 14. http://localhost:3000/telehikaya - Get telehikaya
+15. http://localhost:3000/search?query=Film - Get search by title, be category
    
