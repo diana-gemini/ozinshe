@@ -18,6 +18,7 @@ func GetRoute(r *gin.Engine) {
 	r.GET("/trends", controllers.GetTrends)
 	r.GET("/newprojects", controllers.GetNewprojects)
 	r.GET("/telehikaya", controllers.GetTelehikaya)
+	r.GET("/search", controllers.Search)
 
 	adminGroup := r.Group("/movie")
 	adminGroup.Use(middleware.IsAdmin())
