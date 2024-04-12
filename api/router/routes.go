@@ -22,6 +22,9 @@ func GetRoute(r *gin.Engine) {
 	r.GET("/editprofile", controllers.EditUserProfile)
 	r.POST("/updateprofile", controllers.UpdateUserProfile)
 	r.POST("/changepassword", controllers.ChangePassword)
+	r.POST("/movie/:id/favorite", controllers.AddMovieToFavorite)
+	r.DELETE("/movie/:id/favorite", controllers.DeleteMovieFromFavorite)
+	r.GET("/movie/favorite", controllers.GetAllFavoriteMovies)
 
 	adminGroup := r.Group("/movie")
 	adminGroup.Use(middleware.IsAdmin())

@@ -43,3 +43,18 @@ func PasswordRepeat(password, passwordrepeat string) bool {
 	}
 	return true
 }
+
+func IsUniqueTwoValue(tableName, firstfieldName, secondfieldName string, firstValue uint, secondValue int) bool {
+	var count int64
+
+	result := initializers.DB.Table(tableName).
+		Where(firstfieldName+" = ? AND "+secondfieldName+" = ?", firstValue, secondValue).
+		Count(&count)
+
+	if result.Error != nil {
+		fmt.Println("Error:", result.Error)
+		return false
+	}
+
+	return count > 0
+}

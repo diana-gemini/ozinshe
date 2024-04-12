@@ -168,7 +168,25 @@ func DeleteMovie(c *gin.Context) {
 		return
 	}
 
-	initializers.DB.Delete(&movie)
+	err := initializers.DB.Delete(&movie).Error
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	var favorite []models.Favorite
+
+	resultFavorite := initializers.DB.Where("movie_id = ?", id).Find(&favorite)
+	if err := resultFavorite.Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	initializers.DB.Delete(&favorite)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "The movie has been deleted successfully",

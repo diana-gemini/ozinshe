@@ -138,4 +138,7 @@ Test routes in Postman (my collection in Postman - https://speeding-flare-870218
     "passwordrepeat": "5555"
 }
 ```
+20. http://localhost:3000/movie/3/favorite - Add favorite movie
+21. http://localhost:3000/movie/favorite - Get all favorite movie
+22. http://localhost:3000/movie/2/favorite - Delete favorite movie
    
