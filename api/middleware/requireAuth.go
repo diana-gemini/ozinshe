@@ -61,7 +61,7 @@ func RequireAuth(c *gin.Context) {
 			return
 		}
 
-		authUser := AuthUser{
+		authUser := &AuthUser{
 			ID:    user.ID,
 			Email: user.Email,
 			Role:  user.RoleID,
@@ -101,4 +101,22 @@ func IsAdmin() gin.HandlerFunc {
 
 		c.Next()
 	}
+}
+
+func GetAuthUserID(c *gin.Context) uint {
+	authUser, exists := c.Get("authUser")
+	if !exists {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": "AuthUser not found",
+		})
+		return 0
+	}
+	user, ok := authUser.(*AuthUser)
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": "AuthUser has unexpected type",
+		})
+		return 0
+	}
+	return user.ID
 }

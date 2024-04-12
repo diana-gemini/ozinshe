@@ -10,6 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var limitOfProjectToDisplay = 5
+
 func GetAllMovies(c *gin.Context) {
 	var movies []models.Movie
 	result := initializers.DB.Find(&movies)
@@ -86,9 +88,8 @@ func GetMovieSeriesByID(c *gin.Context) {
 }
 
 func GetTrends(c *gin.Context) {
-	limitOfNewProject := 5
 	var movies []models.Movie
-	result := initializers.DB.Order("count_of_watch desc").Limit(limitOfNewProject).Find(&movies)
+	result := initializers.DB.Order("count_of_watch desc").Limit(limitOfProjectToDisplay).Find(&movies)
 
 	if err := result.Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -103,9 +104,8 @@ func GetTrends(c *gin.Context) {
 }
 
 func GetNewprojects(c *gin.Context) {
-	limitOfNewProject := 5
 	var movies []models.Movie
-	result := initializers.DB.Order("created_at desc").Limit(limitOfNewProject).Find(&movies)
+	result := initializers.DB.Order("created_at desc").Limit(limitOfProjectToDisplay).Find(&movies)
 
 	if err := result.Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -120,11 +120,10 @@ func GetNewprojects(c *gin.Context) {
 }
 
 func GetTelehikaya(c *gin.Context) {
-	limitOfNewProject := 5
 	var movies []models.Movie
 	result := initializers.DB.Where("type_of_project = ?", "Serial").
 		Order("created_at desc").
-		Limit(limitOfNewProject).
+		Limit(limitOfProjectToDisplay).
 		Find(&movies)
 
 	if err := result.Error; err != nil {

@@ -19,9 +19,9 @@ func GetRoute(r *gin.Engine) {
 	r.GET("/newprojects", controllers.GetNewprojects)
 	r.GET("/telehikaya", controllers.GetTelehikaya)
 	r.GET("/search", controllers.Search)
-	r.GET("/editprofile/:id", controllers.EditUserProfile)
-	r.POST("/updateprofile/:id", controllers.UpdateUserProfile)
-	r.POST("/changepassword/:id", controllers.ChangePassword)
+	r.GET("/editprofile", controllers.EditUserProfile)
+	r.POST("/updateprofile", controllers.UpdateUserProfile)
+	r.POST("/changepassword", controllers.ChangePassword)
 
 	adminGroup := r.Group("/movie")
 	adminGroup.Use(middleware.IsAdmin())
