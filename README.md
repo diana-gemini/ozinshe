@@ -122,8 +122,8 @@ Test routes in Postman (my collection in Postman - https://speeding-flare-870218
 13. http://localhost:3000/newprojects - Get new projects
 14. http://localhost:3000/telehikaya - Get telehikaya
 15. http://localhost:3000/search?query=Film - Get search by title, by category
-16. http://localhost:3000/editprofile/2 - Get profile
-17. http://localhost:3000/updateprofile/2 - Update profile
+16. http://localhost:3000/editprofile - Get profile
+17. http://localhost:3000/updateprofile - Update profile
 ```json
 {
     "username": "User",
@@ -131,7 +131,7 @@ Test routes in Postman (my collection in Postman - https://speeding-flare-870218
     "birthDate": "01.01.2000"    
 }
 ```
-19. http://localhost:3000/changepassword/2 - Change password
+19. http://localhost:3000/changepassword - Change password
 ```json
 {
     "password": "5555",
