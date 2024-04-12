@@ -103,9 +103,41 @@ func GetTrends(c *gin.Context) {
 	})
 }
 
+func GetAllTrends(c *gin.Context) {
+	var movies []models.Movie
+	result := initializers.DB.Order("count_of_watch desc").Find(&movies)
+
+	if err := result.Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"movie": "Record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"Movies": movies,
+	})
+}
+
 func GetNewprojects(c *gin.Context) {
 	var movies []models.Movie
 	result := initializers.DB.Order("created_at desc").Limit(limitOfProjectToDisplay).Find(&movies)
+
+	if err := result.Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"movie": "Record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"Movies": movies,
+	})
+}
+
+func GetAllNewprojects(c *gin.Context) {
+	var movies []models.Movie
+	result := initializers.DB.Order("created_at desc").Find(&movies)
 
 	if err := result.Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -124,6 +156,24 @@ func GetTelehikaya(c *gin.Context) {
 	result := initializers.DB.Where("type_of_project = ?", "Serial").
 		Order("created_at desc").
 		Limit(limitOfProjectToDisplay).
+		Find(&movies)
+
+	if err := result.Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"movie": "Record not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"Movies": movies,
+	})
+}
+
+func GetAllTelehikaya(c *gin.Context) {
+	var movies []models.Movie
+	result := initializers.DB.Where("type_of_project = ?", "Serial").
+		Order("created_at desc").
 		Find(&movies)
 
 	if err := result.Error; err != nil {
