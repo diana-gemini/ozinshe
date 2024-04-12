@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	"ozinshe/api/middleware"
 	"ozinshe/db/initializers"
+	"ozinshe/internal/helpers"
 	"ozinshe/internal/models"
 	"ozinshe/internal/validations"
 
@@ -128,7 +128,8 @@ func Logout(c *gin.Context) {
 }
 
 func EditUserProfile(c *gin.Context) {
-	id := middleware.GetAuthUserID(c)
+	authUser := helpers.GetAuthUser(c)
+	id := authUser.ID
 	var user models.User
 	result := initializers.DB.Select("username", "email", "mobile_phone", "birth_date").First(&user, id)
 	if err := result.Error; err != nil {
@@ -145,7 +146,8 @@ func EditUserProfile(c *gin.Context) {
 }
 
 func UpdateUserProfile(c *gin.Context) {
-	id := middleware.GetAuthUserID(c)
+	authUser := helpers.GetAuthUser(c)
+	id := authUser.ID
 
 	var userInput struct {
 		Username    string `json:"username" binding:"min=2"`
@@ -193,7 +195,8 @@ func UpdateUserProfile(c *gin.Context) {
 }
 
 func ChangePassword(c *gin.Context) {
-	id := middleware.GetAuthUserID(c)
+	authUser := helpers.GetAuthUser(c)
+	id := authUser.ID
 
 	var userInput struct {
 		Password       string `json:"password" binding:"required,min=4"`

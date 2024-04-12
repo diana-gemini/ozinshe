@@ -23,3 +23,4 @@ func GetAuthUser(c *gin.Context) *middleware.AuthUser {
 
 	return nil
 }
+
