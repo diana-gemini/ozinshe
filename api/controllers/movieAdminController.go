@@ -13,7 +13,7 @@ import (
 func CreateMovie(c *gin.Context) {
 	var userInput struct {
 		NameOfProject string               `json:"nameOfProject" binding:"required,min=2"`
-		CategoryID    uint                 `json:"categoryID" binding:"required"`
+		Categories    []models.Category    `json:"categories" binding:"required"`
 		TypeID        uint                 `json:"typeID" binding:"required"`
 		AgeCategories []models.AgeCategory `json:"ageCategories" binding:"required"`
 		Screenshots   []models.Screenshot  `json:"screenshots" binding:"required"`
@@ -34,11 +34,18 @@ func CreateMovie(c *gin.Context) {
 		return
 	}
 
-	if !validations.IsExistValue("categories", "id", userInput.CategoryID) ||
-		!validations.IsExistValue("types", "id", userInput.TypeID) {
+	for _, category := range userInput.Categories {
+		if !validations.IsExistValue("categories", "id", category.ID) {
+			c.JSON(http.StatusUnprocessableEntity, gin.H{
+				"CategoryID": "The category does not exist!",
+			})
+			return
+		}
+	}
 
+	if !validations.IsExistValue("types", "id", userInput.TypeID) {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"CategoryId": "The category or types does not exist!",
+			"TypesID": "The types does not exist!",
 		})
 		return
 	}
@@ -46,7 +53,7 @@ func CreateMovie(c *gin.Context) {
 	for _, ageCategory := range userInput.AgeCategories {
 		if !validations.IsExistValue("age_categories", "id", ageCategory.ID) {
 			c.JSON(http.StatusUnprocessableEntity, gin.H{
-				"AgeCategoryId": "The age category does not exist!",
+				"AgeCategoryID": "The age category does not exist!",
 			})
 			return
 		}
@@ -61,7 +68,7 @@ func CreateMovie(c *gin.Context) {
 
 	movie := models.Movie{
 		NameOfProject: userInput.NameOfProject,
-		CategoryID:    userInput.CategoryID,
+		Categories:    userInput.Categories,
 		TypeID:        userInput.TypeID,
 		AgeCategories: userInput.AgeCategories,
 		Screenshots:   userInput.Screenshots,
@@ -117,7 +124,7 @@ func UpdateMovie(c *gin.Context) {
 
 	var userInput struct {
 		NameOfProject string               `json:"nameOfProject" binding:"required,min=2"`
-		CategoryID    uint                 `json:"categoryID" binding:"required"`
+		Categories    []models.Category                 `json:"categories" binding:"required"`
 		TypeID        uint                 `json:"typeID" binding:"required"`
 		AgeCategories []models.AgeCategory `json:"ageCategories" binding:"required"`
 		Screenshots   []models.Screenshot  `json:"screenshots" binding:"required"`
@@ -138,11 +145,18 @@ func UpdateMovie(c *gin.Context) {
 		return
 	}
 
-	if !validations.IsExistValue("categories", "id", userInput.CategoryID) ||
-		!validations.IsExistValue("types", "id", userInput.TypeID) {
+	for _, category := range userInput.Categories {
+		if !validations.IsExistValue("categories", "id", category.ID) {
+			c.JSON(http.StatusUnprocessableEntity, gin.H{
+				"CategoryID": "The category does not exist!",
+			})
+			return
+		}
+	}
 
+	if !validations.IsExistValue("types", "id", userInput.TypeID) {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"CategoryId": "The category or types does not exist!",
+			"TypesID": "The types does not exist!",
 		})
 		return
 	}
@@ -150,7 +164,7 @@ func UpdateMovie(c *gin.Context) {
 	for _, ageCategory := range userInput.AgeCategories {
 		if !validations.IsExistValue("age_categories", "id", ageCategory.ID) {
 			c.JSON(http.StatusUnprocessableEntity, gin.H{
-				"AgeCategoryId": "The age category does not exist!",
+				"AgeCategoryID": "The age category does not exist!",
 			})
 			return
 		}
@@ -175,7 +189,7 @@ func UpdateMovie(c *gin.Context) {
 
 	updateMovie := models.Movie{
 		NameOfProject: userInput.NameOfProject,
-		CategoryID:    userInput.CategoryID,
+		Categories:    userInput.Categories,
 		TypeID:        userInput.TypeID,
 		AgeCategories: userInput.AgeCategories,
 		Screenshots:   userInput.Screenshots,

@@ -13,7 +13,8 @@ import (
 
 func GetAllMovies(c *gin.Context) {
 	var movies []models.Movie
-	result := initializers.DB.Preload("Screenshots").
+	result := initializers.DB.Preload("Categories").
+		Preload("Screenshots").
 		Preload("AgeCategories").
 		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Videos")
@@ -35,7 +36,8 @@ func GetMovieByID(c *gin.Context) {
 	id := c.Param("id")
 
 	var movie models.Movie
-	result := initializers.DB.Preload("Screenshots").
+	result := initializers.DB.Preload("Categories").
+		Preload("Screenshots").
 		Preload("AgeCategories").
 		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Videos")
@@ -78,7 +80,8 @@ func GetMovieSeriesByID(c *gin.Context) {
 	}
 
 	var movie models.Movie
-	result := initializers.DB.Preload("Screenshots").
+	result := initializers.DB.Preload("Categories").
+		Preload("Screenshots").
 		Preload("AgeCategories").
 		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Videos")
@@ -100,7 +103,8 @@ func GetMovieSeriesByID(c *gin.Context) {
 
 func GetTrends(c *gin.Context) {
 	var movies []models.Movie
-	result := initializers.DB.Preload("Screenshots").
+	result := initializers.DB.Preload("Categories").
+		Preload("Screenshots").
 		Preload("AgeCategories").
 		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Videos")
@@ -120,7 +124,8 @@ func GetTrends(c *gin.Context) {
 
 func GetNewprojects(c *gin.Context) {
 	var movies []models.Movie
-	result := initializers.DB.Preload("Screenshots").
+	result := initializers.DB.Preload("Categories").
+		Preload("Screenshots").
 		Preload("AgeCategories").
 		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Videos")
@@ -152,6 +157,7 @@ func GetTelehikaya(c *gin.Context) {
 	}
 
 	result = initializers.DB.
+		Preload("Categories").
 		Preload("Screenshots").
 		Preload("AgeCategories").
 		Preload("Seasons", func(db *gorm.DB) *gorm.DB {

@@ -20,7 +20,7 @@ func init() {
 func main() {
 	err := initializers.DB.Migrator().DropTable(models.User{}, models.Movie{},
 		models.Favorite{}, models.Category{}, models.Type{}, models.AgeCategory{},
-		models.Screenshot{}, models.Season{}, models.Video{}, "age")
+		models.Screenshot{}, models.Season{}, models.Video{}, "movie_age", "movie_category")
 	if err != nil {
 		log.Fatal("Table dropping failed")
 	}
