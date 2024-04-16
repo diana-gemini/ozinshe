@@ -8,11 +8,16 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func GetAllMovies(c *gin.Context) {
 	var movies []models.Movie
-	result := initializers.DB.Find(&movies)
+	result := initializers.DB.Preload("Screenshots").
+		Preload("AgeCategories").
+		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
+			return db.Preload("Videos")
+		}).Find(&movies)
 
 	if err := result.Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -30,7 +35,11 @@ func GetMovieByID(c *gin.Context) {
 	id := c.Param("id")
 
 	var movie models.Movie
-	result := initializers.DB.First(&movie, id)
+	result := initializers.DB.Preload("Screenshots").
+		Preload("AgeCategories").
+		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
+			return db.Preload("Videos")
+		}).First(&movie, id)
 
 	if err := result.Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -69,7 +78,11 @@ func GetMovieSeriesByID(c *gin.Context) {
 	}
 
 	var movie models.Movie
-	result := initializers.DB.First(&movie, movieID)
+	result := initializers.DB.Preload("Screenshots").
+		Preload("AgeCategories").
+		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
+			return db.Preload("Videos")
+		}).First(&movie, movieID)
 
 	if err := result.Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -78,7 +91,7 @@ func GetMovieSeriesByID(c *gin.Context) {
 		return
 	}
 
-	seriesLink := fmt.Sprintf("https://www.youtube.com/watch?v=%v", movie.CountOfSeason[seasonID-1].LinkOfSeries[seriesID-1])
+	seriesLink := fmt.Sprintf("https://www.youtube.com/watch?v=%v", movie.Seasons[seasonID-1].Videos[seriesID-1].Link)
 
 	c.JSON(http.StatusOK, gin.H{
 		"Series": seriesLink,
@@ -87,7 +100,11 @@ func GetMovieSeriesByID(c *gin.Context) {
 
 func GetTrends(c *gin.Context) {
 	var movies []models.Movie
-	result := initializers.DB.Order("count_of_watch desc").Find(&movies)
+	result := initializers.DB.Preload("Screenshots").
+		Preload("AgeCategories").
+		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
+			return db.Preload("Videos")
+		}).Order("count_of_watch desc").Find(&movies)
 
 	if err := result.Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -103,7 +120,11 @@ func GetTrends(c *gin.Context) {
 
 func GetNewprojects(c *gin.Context) {
 	var movies []models.Movie
-	result := initializers.DB.Order("created_at desc").Find(&movies)
+	result := initializers.DB.Preload("Screenshots").
+		Preload("AgeCategories").
+		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
+			return db.Preload("Videos")
+		}).Order("created_at desc").Find(&movies)
 
 	if err := result.Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -119,7 +140,23 @@ func GetNewprojects(c *gin.Context) {
 
 func GetTelehikaya(c *gin.Context) {
 	var movies []models.Movie
-	result := initializers.DB.Where("type_of_project = ?", "Serial").
+
+	var types models.Type
+	result := initializers.DB.Preload("Types").Where("type_name = ?", "Serial").Find(&types)
+
+	if err := result.Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"Type": "Type not found",
+		})
+		return
+	}
+
+	result = initializers.DB.
+		Preload("Screenshots").
+		Preload("AgeCategories").
+		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
+			return db.Preload("Videos")
+		}).Where("type_id = ?", types.ID).
 		Order("created_at desc").
 		Find(&movies)
 

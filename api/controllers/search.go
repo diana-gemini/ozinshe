@@ -6,6 +6,7 @@ import (
 	"ozinshe/internal/models"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func Search(c *gin.Context) {
@@ -18,7 +19,13 @@ func Search(c *gin.Context) {
 	}
 
 	var movies []models.Movie
-	result := initializers.DB.Where("LOWER(name_of_project) LIKE LOWER(?) OR LOWER(category) LIKE LOWER(?)", "%"+query+"%", "%"+query+"%").Find(&movies)
+
+	result := initializers.DB.Preload("Screenshots").
+		Preload("AgeCategories").
+		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
+			return db.Preload("Videos")
+		}).Where("LOWER(name_of_project) LIKE LOWER(?) ", "%"+query+"%").Find(&movies)
+
 	if err := result.Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return

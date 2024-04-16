@@ -26,13 +26,16 @@ func GetRoute(r *gin.Engine) {
 	r.DELETE("/movie/:id/favorite", controllers.DeleteMovieFromFavorite)
 	r.GET("/movie/favorite", controllers.GetAllFavoriteMovies)
 
-	adminGroup := r.Group("/movie")
-	adminGroup.Use(middleware.IsAdmin())
+	admin := r.Group("/admin")
+	admin.Use(middleware.IsAdmin())
 	{
-		adminGroup.POST("/create", controllers.CreateMovie)
-		adminGroup.GET("/:id/edit", controllers.EditMovie)
-		adminGroup.PUT("/:id/update", controllers.UpdateMovie)
-		adminGroup.DELETE("/:id/delete", controllers.DeleteMovie)
-	}
+		admin.POST("/movie/create", controllers.CreateMovie)
+		admin.GET("/movie/:id/edit", controllers.EditMovie)
+		admin.PUT("/movie/:id/update", controllers.UpdateMovie)
+		admin.DELETE("/movie/:id/delete", controllers.DeleteMovie)
+		admin.POST("/category/create", controllers.CreateCategory)
+		admin.POST("/type/create", controllers.CreateTypeOfProject)
+		admin.POST("/agecategory/create", controllers.AgeCreateCategory)
 
+	}
 }

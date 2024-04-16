@@ -13,7 +13,7 @@ import (
 
 type FavoriteResponse struct {
 	UserID  uint
-	MovieID int
+	MovieID uint
 }
 
 func AddMovieToFavorite(c *gin.Context) {
@@ -28,7 +28,7 @@ func AddMovieToFavorite(c *gin.Context) {
 		return
 	}
 
-	if validations.IsUniqueTwoValue("favorites", "user_id", "movie_id", authUser.ID, movieID) {
+	if validations.IsUniqueTwoValue("favorites", "user_id", "movie_id", authUser.ID, uint(movieID)) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"UniqueValue": "This favorite movie is already exist!",
 		})
@@ -37,7 +37,7 @@ func AddMovieToFavorite(c *gin.Context) {
 
 	favoriteMovie := models.Favorite{
 		UserID:  authUser.ID,
-		MovieID: movieID,
+		MovieID: uint(movieID),
 	}
 
 	result := initializers.DB.Create(&favoriteMovie)
@@ -68,7 +68,7 @@ func DeleteMovieFromFavorite(c *gin.Context) {
 		return
 	}
 
-	initializers.DB.Delete(&favorite)
+	initializers.DB.Unscoped().Delete(&favorite)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "The favorite movie has been deleted successfully",
