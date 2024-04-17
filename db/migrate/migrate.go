@@ -59,8 +59,7 @@ func CreateAdmin() {
 func CreateCategories() {
 	categories := []models.Category{
 		{CategoryName: "Horor"},
-		{CategoryName: "Comedy"},
-		{CategoryName: "Drama"},
+		{CategoryName: "Anime"},
 	}
 
 	for _, category := range categories {
