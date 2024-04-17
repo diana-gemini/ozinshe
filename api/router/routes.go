@@ -36,9 +36,17 @@ func GetRoute(r *gin.Engine) {
 		admin.GET("/movie/:id/edit", controllers.EditMovie)
 		admin.PUT("/movie/:id/update", controllers.UpdateMovie)
 		admin.DELETE("/movie/:id/delete", controllers.DeleteMovie)
-		admin.POST("/category/create", controllers.CreateCategory)
-		admin.POST("/type/create", controllers.CreateTypeOfProject)
-		admin.POST("/agecategory/create", controllers.AgeCreateCategory)
 
+		admin.POST("/category/create", controllers.CreateCategory)
+		admin.PUT("/category/:id/update", controllers.UpdateCategory)
+		admin.DELETE("/category/:id/delete", controllers.DeleteCategory)
+
+		admin.POST("/type/create", controllers.CreateTypeOfProject)
+		admin.PUT("/type/:id/update", controllers.UpdateTypeOfProject)
+		admin.DELETE("/type/:id/delete", controllers.DeleteTypeOfProject)
+
+		admin.POST("/agecategory/create", controllers.CreateAgeCategory)
+		admin.PUT("/agecategory/:id/update", controllers.UpdateAgeCategory)
+		admin.DELETE("/agecategory/:id/delete", controllers.DeleteAgeCategory)
 	}
 }

@@ -18,14 +18,16 @@ func init() {
 }
 
 func main() {
-	err := initializers.DB.Migrator().DropTable(models.User{}, models.Movie{},
-		models.Favorite{}, models.Category{}, models.Type{}, models.AgeCategory{},
-		models.Screenshot{}, models.Season{}, models.Video{}, "movie_age", "movie_category")
-	if err != nil {
-		log.Fatal("Table dropping failed")
-	}
+	//follow code delete table from DB
 
-	err = initializers.DB.AutoMigrate(models.User{}, models.AgeCategory{}, models.Category{}, models.Type{},
+	// err := initializers.DB.Migrator().DropTable(models.User{}, models.Movie{},
+	// 	models.Favorite{}, models.Category{}, models.Type{}, models.AgeCategory{},
+	// 	models.Screenshot{}, models.Season{}, models.Video{}, "movie_age", "movie_category")
+	// if err != nil {
+	// 	log.Fatal("Table dropping failed")
+	// }
+
+	err := initializers.DB.AutoMigrate(models.User{}, models.AgeCategory{}, models.Category{}, models.Type{},
 		models.Movie{}, models.Favorite{}, models.Screenshot{}, models.Season{}, models.Video{})
 
 	if err != nil {
@@ -33,7 +35,6 @@ func main() {
 	}
 
 	CreateAdmin()
-	// CreateCategories()
 }
 
 func CreateAdmin() {
@@ -53,18 +54,5 @@ func CreateAdmin() {
 	if result.Error != nil {
 		fmt.Println("Internal server error")
 		return
-	}
-}
-
-func CreateCategories() {
-	categories := []models.Category{
-		{CategoryName: "Horor"},
-		{CategoryName: "Anime"},
-	}
-
-	for _, category := range categories {
-		if err := initializers.DB.Create(&category).Error; err != nil {
-			log.Fatalf("Failed to insert category: %v", err)
-		}
 	}
 }

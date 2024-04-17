@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"ozinshe/db/initializers"
 	"ozinshe/internal/models"
@@ -94,10 +93,9 @@ func GetMovieSeriesByID(c *gin.Context) {
 		return
 	}
 
-	seriesLink := fmt.Sprintf("https://www.youtube.com/watch?v=%v", movie.Seasons[seasonID-1].Videos[seriesID-1].Link)
+	//seriesLink := fmt.Sprintf("https://www.youtube.com/watch?v=%v", movie.Seasons[seasonID-1].Videos[seriesID-1].Link)
 
 	c.JSON(http.StatusOK, gin.H{
-		"Series": seriesLink,
+		"Series": movie.Seasons[seasonID-1].Videos[seriesID-1].Link,
 	})
 }
-

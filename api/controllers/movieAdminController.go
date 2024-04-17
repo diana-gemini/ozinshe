@@ -124,7 +124,7 @@ func UpdateMovie(c *gin.Context) {
 
 	var userInput struct {
 		NameOfProject string               `json:"nameOfProject" binding:"required,min=2"`
-		Categories    []models.Category                 `json:"categories" binding:"required"`
+		Categories    []models.Category    `json:"categories" binding:"required"`
 		TypeID        uint                 `json:"typeID" binding:"required"`
 		AgeCategories []models.AgeCategory `json:"ageCategories" binding:"required"`
 		Screenshots   []models.Screenshot  `json:"screenshots" binding:"required"`
@@ -247,131 +247,9 @@ func DeleteMovie(c *gin.Context) {
 		return
 	}
 
-	initializers.DB.Delete(&favorite)
+	initializers.DB.Unscoped().Delete(&favorite)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "The movie has been deleted successfully",
-	})
-}
-
-func CreateCategory(c *gin.Context) {
-	var userInput struct {
-		CategoryName string `json:"categoryName" binding:"required,min=2"`
-	}
-
-	if err := c.ShouldBindJSON(&userInput); err != nil {
-
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-
-		return
-	}
-
-	if validations.IsUniqueValue("categories", "category_name", userInput.CategoryName) {
-		c.JSON(http.StatusConflict, gin.H{
-			"validations": map[string]interface{}{
-				"Name": "The category name is already exist!",
-			},
-		})
-		return
-	}
-
-	category := models.Category{
-		CategoryName: userInput.CategoryName,
-	}
-
-	result := initializers.DB.Create(&category)
-
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Cannot create category",
-		})
-
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"category": category,
-	})
-}
-
-func CreateTypeOfProject(c *gin.Context) {
-	var userInput struct {
-		TypeName string `json:"TypeName" binding:"required,min=2"`
-	}
-
-	if err := c.ShouldBindJSON(&userInput); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	if validations.IsUniqueValue("types", "type_name", userInput.TypeName) {
-		c.JSON(http.StatusConflict, gin.H{
-			"validations": map[string]interface{}{
-				"Name": "The type name is already exist!",
-			},
-		})
-		return
-	}
-
-	typeOfProject := models.Type{
-		TypeName: userInput.TypeName,
-	}
-
-	result := initializers.DB.Create(&typeOfProject)
-
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Cannot create category",
-		})
-
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"typeOfProject": typeOfProject,
-	})
-}
-
-func AgeCreateCategory(c *gin.Context) {
-	var userInput struct {
-		AgeCategoryName string `json:"ageCategoryName" binding:"required,min=2"`
-	}
-
-	if err := c.ShouldBindJSON(&userInput); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	if validations.IsUniqueValue("age_categories", "age_category_name", userInput.AgeCategoryName) {
-		c.JSON(http.StatusConflict, gin.H{
-			"validations": map[string]interface{}{
-				"Name": "The category name is already exist!",
-			},
-		})
-		return
-	}
-
-	ageCategory := models.AgeCategory{
-		AgeCategoryName: userInput.AgeCategoryName,
-	}
-
-	result := initializers.DB.Create(&ageCategory)
-
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Cannot create category",
-		})
-
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"ageCategory": ageCategory,
 	})
 }
