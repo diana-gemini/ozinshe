@@ -86,12 +86,34 @@ func Home(c *gin.Context) {
 		})
 	}
 
+	var category []models.Category
+
+	categoryResult := initializers.DB.Find(&category)
+
+	if err := categoryResult.Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"Category": "Category not found",
+		})
+	}
+
+	var ageCategory []models.AgeCategory
+
+	ageCategoryResult := initializers.DB.Find(&ageCategory)
+
+	if err := ageCategoryResult.Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"AgeCategory": "Age category not found",
+		})
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"TrendMovies": trendMovies,
 		"NewMovies":   newMovies,
 		"Telehikaya":  telehikayaMovies,
 		"Horor":       hororMovies,
 		"Anime":       animeMovies,
+		"Category":    category,
+		"AgeCategory": ageCategory,
 	})
 }
 
