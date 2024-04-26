@@ -10,6 +10,9 @@ import (
 func GetRoute(r *gin.Engine) {
 	r.POST("/signup", controllers.Signup)
 	r.POST("/login", controllers.Login)
+	r.POST("/passwordrecover", controllers.PasswordRecover)
+	r.POST("/resetpassword", controllers.ResetPassword)
+
 	r.Use(middleware.RequireAuth)
 	r.POST("/logout", controllers.Logout)
 	r.GET("/home", controllers.Home)

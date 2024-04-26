@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"crypto/rand"
+	"encoding/hex"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -13,6 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
+	"gopkg.in/gomail.v2"
 )
 
 func Signup(c *gin.Context) {
@@ -238,6 +242,108 @@ func ChangePassword(c *gin.Context) {
 
 	updateUserPassword := models.User{
 		Password: string(hashPassword),
+	}
+
+	result = initializers.DB.Model(&user).Updates(&updateUserPassword)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": result.Error,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"password": "Password successfully changed",
+	})
+}
+
+var resetTokens = make(map[string]string)
+
+func PasswordRecover(c *gin.Context) {
+	email := c.PostForm("email")
+
+	var user models.User
+	initializers.DB.First(&user, "email = ?", email)
+
+	if user.ID == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "User not found",
+		})
+		return
+	}
+
+	token := generateToken()
+	resetTokens[token] = email
+
+	err := sendResetEmail(email, token)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send reset email"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Password reset email sent"})
+}
+
+func generateToken() string {
+	b := make([]byte, 16)
+	rand.Read(b)
+	return hex.EncodeToString(b)
+}
+
+func sendResetEmail(email, token string) error {
+	m := gomail.NewMessage()
+	m.SetHeader("From", "diana-test-project@mail.ru")
+	m.SetHeader("To", email)
+	m.SetHeader("Subject", "Password Reset")
+	m.SetBody("text/html", fmt.Sprintf("Click the following link to reset your password: <a href=\"http://localhost:3000/reset?token=%s\">Reset Password</a>", token))
+
+	d := gomail.NewDialer("smtp.mail.ru", 587, "diana-test-project@mail.ru", "phwEkPnEPudpnmU0Pvvn")
+
+	if err := d.DialAndSend(m); err != nil {
+		return err
+	}
+	return nil
+}
+
+func ResetPassword(c *gin.Context) {
+	token := c.PostForm("token")
+	password := c.PostForm("password")
+	passwordRepeat := c.PostForm("passwordrepeat")
+
+	email, ok := resetTokens[token]
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid reset token"})
+		return
+	}
+
+	if !validations.CheckPassword(password, passwordRepeat) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Password": "Passwords should be the same",
+		})
+		return
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate password hash"})
+		return
+	}
+
+	delete(resetTokens, token)
+
+	var user models.User
+	result := initializers.DB.Where("email = ?", email).First(&user)
+
+	if err := result.Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	updateUserPassword := models.User{
+		Password: string(hashedPassword),
 	}
 
 	result = initializers.DB.Model(&user).Updates(&updateUserPassword)

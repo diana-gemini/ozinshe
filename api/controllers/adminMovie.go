@@ -16,14 +16,23 @@ func CreateMovie(c *gin.Context) {
 	categoriesArray := c.PostFormArray("categories")
 	typeID := c.PostForm("typeID")
 	ageCategoryID := c.PostForm("ageCategoryID")
-	//screenshotsArray := c.PostFormArray("screenshots")
 	year := c.PostForm("year")
 	timing := c.PostForm("timing")
 	keywords := c.PostForm("keywords")
 	description := c.PostForm("description")
 	director := c.PostForm("director")
 	producer := c.PostForm("producer")
-	cover := c.PostForm("cover")
+
+	err := c.Request.ParseMultipartForm(10 << 20)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to parse form"})
+		return
+	}
+
+	form := c.Request.MultipartForm
+
+	screenshotsArray := form.File["screenshots"]
+	cover := form.File["cover"]
 
 	if validations.IsUniqueValue("movies", "name_of_project", nameOfProject) {
 		c.JSON(http.StatusConflict, gin.H{
@@ -90,19 +99,51 @@ func CreateMovie(c *gin.Context) {
 		return
 	}
 
+	screenshotsURL, err := ImageUpload(c, screenshotsArray)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	var screenshots []models.Screenshot
+
+	for _, screenshotURL := range screenshotsURL {
+		screenshot := models.Screenshot{
+			Link: screenshotURL,
+		}
+		screenshots = append(screenshots, screenshot)
+	}
+
+	coverURL, err := ImageUpload(c, cover)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	if len(coverURL) < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Cover is not found",
+		})
+		return
+	}
+
 	movie := models.Movie{
 		NameOfProject: nameOfProject,
 		Categories:    categories,
 		TypeID:        uint(typeIDInt),
 		AgeCategoryID: uint(ageCategoryIDInt),
-		//Screenshots:   screenshots,
-		Year:        year,
-		Timing:      timing,
-		Keywords:    keywords,
-		Description: description,
-		Director:    director,
-		Producer:    producer,
-		Cover:       cover,
+		Screenshots:   screenshots,
+		Year:          year,
+		Timing:        timing,
+		Keywords:      keywords,
+		Description:   description,
+		Director:      director,
+		Producer:      producer,
+		Cover:         coverURL[0],
 	}
 
 	result := initializers.DB.Create(&movie)
