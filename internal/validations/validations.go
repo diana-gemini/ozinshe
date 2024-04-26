@@ -22,7 +22,7 @@ func CheckPassword(password, passwordrepeat string) bool {
 	if password == "" {
 		return false
 	}
-	if len(password) < 4 {
+	if len(password) < 8 {
 		return false
 	}
 	if len(password) > 50 {
