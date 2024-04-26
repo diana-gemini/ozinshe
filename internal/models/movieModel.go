@@ -10,7 +10,7 @@ type Movie struct {
 	Categories    []Category `gorm:"many2many:movie_category;"`
 	TypeID        uint
 	AgeCategoryID uint
-	//Screenshots   []Screenshot
+	Screenshots   []Screenshot
 	Seasons       []Season
 	Year          string `gorm:"not null" json:"year"`
 	Timing        string `gorm:"not null" json:"timing"`
