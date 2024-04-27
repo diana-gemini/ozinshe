@@ -1,0 +1,14 @@
+basePath: /
+host: localhost:3000
+info:
+  contact: {}
+  description: API Server for Ozinwe
+  title: Ozinwe API
+  version: "1.0"
+paths: {}
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
