@@ -5,9 +5,9 @@ import (
 	"log"
 	"os"
 
-	"ozinshe/config"
-	"ozinshe/db/initializers"
-	"ozinshe/internal/models"
+	"github.com/diana-gemini/ozinshe/config"
+	"github.com/diana-gemini/ozinshe/db/initializers"
+	"github.com/diana-gemini/ozinshe/internal/models"
 
 	"golang.org/x/crypto/bcrypt"
 )

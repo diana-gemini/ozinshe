@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"net/http"
-	"ozinshe/db/initializers"
-	"ozinshe/internal/helpers"
-	"ozinshe/internal/models"
-	"ozinshe/internal/validations"
+	"github.com/diana-gemini/ozinshe/db/initializers"
+	"github.com/diana-gemini/ozinshe/internal/helpers"
+	"github.com/diana-gemini/ozinshe/internal/models"
+	"github.com/diana-gemini/ozinshe/internal/validations"
 	"strconv"
 
 	"github.com/gin-gonic/gin"

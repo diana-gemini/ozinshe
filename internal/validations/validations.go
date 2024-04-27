@@ -2,7 +2,7 @@ package validations
 
 import (
 	"fmt"
-	"ozinshe/db/initializers"
+	"github.com/diana-gemini/ozinshe/db/initializers"
 )
 
 func IsUniqueValue(tableName, fieldName, value string) bool {

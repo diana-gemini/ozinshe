@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"net/http"
-	"ozinshe/db/initializers"
-	"ozinshe/internal/models"
+	"github.com/diana-gemini/ozinshe/db/initializers"
+	"github.com/diana-gemini/ozinshe/internal/models"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"ozinshe/db/initializers"
-	"ozinshe/internal/models"
+	"github.com/diana-gemini/ozinshe/db/initializers"
+	"github.com/diana-gemini/ozinshe/internal/models"
 	"strings"
 	"time"
 

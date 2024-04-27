@@ -8,10 +8,10 @@ import (
 	"os"
 	"time"
 
-	"ozinshe/db/initializers"
-	"ozinshe/internal/helpers"
-	"ozinshe/internal/models"
-	"ozinshe/internal/validations"
+	"github.com/diana-gemini/ozinshe/db/initializers"
+	"github.com/diana-gemini/ozinshe/internal/helpers"
+	"github.com/diana-gemini/ozinshe/internal/models"
+	"github.com/diana-gemini/ozinshe/internal/validations"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -19,40 +19,46 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
+type AuthUser struct {
+	Email          string `json:"email" binding:"required,email" example:"user@mail.ru"`
+	Password       string `json:"password" binding:"required" example:"123456789"`
+	RepeatPassword string `json:"passwordrepeat" binding:"required" example:"123456789"`
+}
+
+// Signup godoc
+// @Summary SignUp
+// @Tags auth-controller
+// @ID create-account
+// @Accept  json
+// @Produce  json
+// @Param signupRequest body AuthUser true "signupRequest"
+// @Success 200 {integer} integer 1
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /signup [post]
 func Signup(c *gin.Context) {
-	var userInput struct {
-		Email          string `json:"email" binding:"required,email"`
-		Password       string `json:"password" binding:"required,min=4"`
-		RepeatPassword string `json:"passwordrepeat" binding:"required,min=4"`
-	}
+	var userInput AuthUser
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
 	if validations.IsUniqueValue("users", "email", userInput.Email) {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"Email": "The email is already exist!",
-		})
+		newErrorResponse(c, http.StatusBadRequest, "email is already exist")
 		return
 	}
 
 	if !validations.CheckPassword(userInput.Password, userInput.RepeatPassword) {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"Password": "Passwords should be the same",
-		})
+		newErrorResponse(c, http.StatusBadRequest, "passwords should be the same")
 		return
 	}
 
 	hashPassword, err := bcrypt.GenerateFromPassword([]byte(userInput.Password), 10)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to hash password",
-		})
+		newErrorResponse(c, http.StatusInternalServerError, "failed to hash password")
 		return
 	}
 
@@ -65,9 +71,7 @@ func Signup(c *gin.Context) {
 	result := initializers.DB.Create(&user)
 
 	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Internal server error",
-		})
+		newErrorResponse(c, http.StatusInternalServerError, "internal server error")
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{

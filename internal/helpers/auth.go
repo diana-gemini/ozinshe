@@ -2,7 +2,7 @@ package helpers
 
 import (
 	"net/http"
-	"ozinshe/api/middleware"
+	"github.com/diana-gemini/ozinshe/api/middleware"
 
 	"github.com/gin-gonic/gin"
 )

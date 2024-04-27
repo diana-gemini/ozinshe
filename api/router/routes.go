@@ -1,13 +1,14 @@
 package router
 
 import (
-	"ozinshe/api/controllers"
-	"ozinshe/api/middleware"
+	"github.com/diana-gemini/ozinshe/api/controllers"
+	"github.com/diana-gemini/ozinshe/api/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func GetRoute(r *gin.Engine) {
+
 	r.POST("/signup", controllers.Signup)
 	r.POST("/login", controllers.Login)
 	r.POST("/passwordrecover", controllers.PasswordRecover)
@@ -31,6 +32,8 @@ func GetRoute(r *gin.Engine) {
 	r.POST("/movie/:id/favorite", controllers.AddMovieToFavorite)
 	r.DELETE("/movie/:id/favorite", controllers.DeleteMovieFromFavorite)
 	r.GET("/movie/favorite", controllers.GetAllFavoriteMovies)
+
+	//r.POST("/testseason", controllers.TestSeason)
 
 	admin := r.Group("/admin")
 	admin.Use(middleware.IsAdmin())
