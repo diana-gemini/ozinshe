@@ -19,7 +19,7 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
-type AuthUser struct {
+type SignUpUser struct {
 	Email          string `json:"email" binding:"required,email" example:"user@mail.ru"`
 	Password       string `json:"password" binding:"required" example:"123456789"`
 	RepeatPassword string `json:"passwordrepeat" binding:"required" example:"123456789"`
@@ -31,14 +31,14 @@ type AuthUser struct {
 // @ID create-account
 // @Accept  json
 // @Produce  json
-// @Param signupRequest body AuthUser true "signupRequest"
+// @Param signupRequest body SignUpUser true "signupRequest"
 // @Success 200 {integer} integer 1
-// @Failure 400 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
 // @Router /signup [post]
 func Signup(c *gin.Context) {
-	var userInput AuthUser
+	var userInput SignUpUser
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
@@ -79,34 +79,41 @@ func Signup(c *gin.Context) {
 	})
 }
 
-func Login(c *gin.Context) {
-	var userInput struct {
-		Email    string `json:"email" binding:"required,email"`
-		Password string `json:"password" binding:"required"`
-	}
+type AuthUser struct {
+	Email    string `json:"email" binding:"required,email" example:"user@mail.ru"`
+	Password string `json:"password" binding:"required" example:"123456789"`
+}
 
-	if c.ShouldBindJSON(&userInput) != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Failed to read body",
-		})
+// Login godoc
+// @Summary Login
+// @Tags auth-controller
+// @ID log-in
+// @Accept  json
+// @Produce  json
+// @Param loginRequest body AuthUser true "loginRequest"
+// @Success 200 {integer} integer 1
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /login [post]
+func Login(c *gin.Context) {
+	var userInput AuthUser
+
+	if err := c.ShouldBindJSON(&userInput); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
 	var user models.User
 	initializers.DB.First(&user, "email = ?", userInput.Email)
-
 	if user.ID == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid email or password",
-		})
+		newErrorResponse(c, http.StatusBadRequest, "invalid email")
 		return
 	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userInput.Password))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid email or password",
-		})
+		newErrorResponse(c, http.StatusBadRequest, "invalid password")
 		return
 	}
 
@@ -116,22 +123,31 @@ func Login(c *gin.Context) {
 	})
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET")))
-
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Failed to create token",
-		})
+		newErrorResponse(c, http.StatusBadRequest, "failed to create token")
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"token": tokenString,
+		"Token": tokenString,
 	})
 }
 
+// Logout godoc
+// @Summary Logout
+// @Security ApiKeyAuth
+// @Tags auth-controller
+// @ID logout
+// @Accept  json
+// @Produce  json
+// @Success 200 {integer} integer 1
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /logout [post]
 func Logout(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
-		"successMessage": "Logout successful",
+		"Logout": "Logout successful",
 	})
 }
 
@@ -264,29 +280,50 @@ func ChangePassword(c *gin.Context) {
 
 var resetTokens = make(map[string]string)
 
+type RecoverUserPassword struct {
+	Email    string `json:"email" binding:"required,email" example:"user@mail.ru"`
+}
+
+// PasswordRecover godoc
+// @Summary PasswordRecover
+// @Tags password
+// @ID password-recover
+// @Accept  json
+// @Produce  json
+// @Param email body RecoverUserPassword true "email" 
+// @Success 200 {integer} integer 1
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /passwordrecover [post]
 func PasswordRecover(c *gin.Context) {
-	email := c.PostForm("email")
+	var userInput RecoverUserPassword
+
+	if err := c.ShouldBindJSON(&userInput); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
 
 	var user models.User
-	initializers.DB.First(&user, "email = ?", email)
+	initializers.DB.First(&user, "email = ?", userInput.Email)
 
 	if user.ID == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "User not found",
-		})
+		newErrorResponse(c, http.StatusBadRequest, "user not found")
 		return
 	}
 
 	token := generateToken()
-	resetTokens[token] = email
+	resetTokens[token] = userInput.Email
 
-	err := sendResetEmail(email, token)
+	err := sendResetEmail(userInput.Email, token)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send reset email"})
+		newErrorResponse(c, http.StatusInternalServerError, "failed to send reset email")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Password reset email sent"})
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Password reset email sent",
+	})
 }
 
 func generateToken() string {
@@ -300,7 +337,7 @@ func sendResetEmail(email, token string) error {
 	m.SetHeader("From", "diana-test-project@mail.ru")
 	m.SetHeader("To", email)
 	m.SetHeader("Subject", "Password Reset")
-	m.SetBody("text/html", fmt.Sprintf("Click the following link to reset your password: <a href=\"http://localhost:3000/reset?token=%s\">Reset Password</a>", token))
+	m.SetBody("text/html", fmt.Sprintf("Click the following link to reset your password: <a href=\"http://localhost:3000/resetpassword?token=%s\">Reset Password</a>", token))
 
 	d := gomail.NewDialer("smtp.mail.ru", 587, "diana-test-project@mail.ru", "phwEkPnEPudpnmU0Pvvn")
 
@@ -310,27 +347,51 @@ func sendResetEmail(email, token string) error {
 	return nil
 }
 
+type ResetUserPassword struct {
+	Password       string `json:"password" binding:"required" example:"123456789"`
+	RepeatPassword string `json:"passwordrepeat" binding:"required" example:"123456789"`
+}
+
+// ResetPassword godoc
+// @Summary ResetPassword
+// @Tags password
+// @ID password-reset
+// @Accept  json
+// @Produce  json
+// @Param token query string true "token received in the URL"
+// @Param resetPassword body ResetUserPassword true "resetPassword"
+// @Success 200 {integer} integer 1
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /resetpassword [post]
 func ResetPassword(c *gin.Context) {
-	token := c.PostForm("token")
-	password := c.PostForm("password")
-	passwordRepeat := c.PostForm("passwordrepeat")
+	token := c.Query("token")
+	if token == "" {
+		newErrorResponse(c, http.StatusBadRequest, "token not found in URL")
+		return
+	}
+
+	var password ResetUserPassword
+	if err := c.ShouldBindJSON(&password); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
 
 	email, ok := resetTokens[token]
 	if !ok {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid reset token"})
+		newErrorResponse(c, http.StatusBadRequest, "invalid reset token")
 		return
 	}
 
-	if !validations.CheckPassword(password, passwordRepeat) {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"Password": "Passwords should be the same",
-		})
+	if !validations.CheckPassword(password.Password, password.RepeatPassword) {
+		newErrorResponse(c, http.StatusBadRequest, "passwords should be the same")
 		return
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password.Password), bcrypt.DefaultCost)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate password hash"})
+		newErrorResponse(c, http.StatusInternalServerError, "failed to generate password hash")
 		return
 	}
 
@@ -340,9 +401,7 @@ func ResetPassword(c *gin.Context) {
 	result := initializers.DB.Where("email = ?", email).First(&user)
 
 	if err := result.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": err,
-		})
+		newErrorResponse(c, http.StatusNotFound, "email not found")
 		return
 	}
 
@@ -353,9 +412,7 @@ func ResetPassword(c *gin.Context) {
 	result = initializers.DB.Model(&user).Updates(&updateUserPassword)
 
 	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": result.Error,
-		})
+		newErrorResponse(c, http.StatusInternalServerError, "password not update")
 		return
 	}
 

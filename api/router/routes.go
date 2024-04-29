@@ -8,7 +8,6 @@ import (
 )
 
 func GetRoute(r *gin.Engine) {
-
 	r.POST("/signup", controllers.Signup)
 	r.POST("/login", controllers.Login)
 	r.POST("/passwordrecover", controllers.PasswordRecover)
@@ -16,6 +15,10 @@ func GetRoute(r *gin.Engine) {
 
 	r.Use(middleware.RequireAuth)
 	r.POST("/logout", controllers.Logout)
+
+	r.GET("/editprofile", controllers.EditUserProfile)
+	r.PUT("/updateprofile", controllers.UpdateUserProfile)
+	r.POST("/changepassword", controllers.ChangePassword)
 	r.GET("/home", controllers.Home)
 	r.GET("/all", controllers.GetAllMovies)
 	r.GET("/movie/:id", controllers.GetMovieByID)
@@ -26,9 +29,6 @@ func GetRoute(r *gin.Engine) {
 	r.GET("/horor", controllers.Horor)
 	r.GET("/anime", controllers.Anime)
 	r.GET("/search", controllers.Search)
-	r.GET("/editprofile", controllers.EditUserProfile)
-	r.POST("/updateprofile", controllers.UpdateUserProfile)
-	r.POST("/changepassword", controllers.ChangePassword)
 	r.POST("/movie/:id/favorite", controllers.AddMovieToFavorite)
 	r.DELETE("/movie/:id/favorite", controllers.DeleteMovieFromFavorite)
 	r.GET("/movie/favorite", controllers.GetAllFavoriteMovies)

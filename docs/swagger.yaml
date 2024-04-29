@@ -1,6 +1,43 @@
 basePath: /
 definitions:
-  controllers.User:
+  controllers.AuthUser:
+    properties:
+      email:
+        example: user@mail.ru
+        type: string
+      password:
+        example: "123456789"
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  controllers.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  controllers.RecoverUserPassword:
+    properties:
+      email:
+        example: user@mail.ru
+        type: string
+    required:
+    - email
+    type: object
+  controllers.ResetUserPassword:
+    properties:
+      password:
+        example: "123456789"
+        type: string
+      passwordrepeat:
+        example: "123456789"
+        type: string
+    required:
+    - password
+    - passwordrepeat
+    type: object
+  controllers.SignUpUser:
     properties:
       email:
         example: user@mail.ru
@@ -16,11 +53,6 @@ definitions:
     - password
     - passwordrepeat
     type: object
-  controllers.errorResponse:
-    properties:
-      message:
-        type: string
-    type: object
 host: localhost:3000
 info:
   contact: {}
@@ -28,6 +60,142 @@ info:
   title: Ozinwe API
   version: "1.0"
 paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      operationId: log-in
+      parameters:
+      - description: loginRequest
+        in: body
+        name: loginRequest
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.AuthUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      summary: Login
+      tags:
+      - auth-controller
+  /logout:
+    post:
+      consumes:
+      - application/json
+      operationId: logout
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Logout
+      tags:
+      - auth-controller
+  /passwordrecover:
+    post:
+      consumes:
+      - application/json
+      operationId: password-recover
+      parameters:
+      - description: email
+        in: body
+        name: email
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.RecoverUserPassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      summary: PasswordRecover
+      tags:
+      - password
+  /resetpassword:
+    post:
+      consumes:
+      - application/json
+      operationId: password-reset
+      parameters:
+      - description: token received in the URL
+        in: query
+        name: token
+        required: true
+        type: string
+      - description: resetPassword
+        in: body
+        name: resetPassword
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ResetUserPassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      summary: ResetPassword
+      tags:
+      - password
   /signup:
     post:
       consumes:
@@ -39,7 +207,7 @@ paths:
         name: signupRequest
         required: true
         schema:
-          $ref: '#/definitions/controllers.User'
+          $ref: '#/definitions/controllers.SignUpUser'
       produces:
       - application/json
       responses:
@@ -50,19 +218,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/controllers.errorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/controllers.errorResponse'
+            $ref: '#/definitions/controllers.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/controllers.errorResponse'
+            $ref: '#/definitions/controllers.ErrorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/controllers.errorResponse'
+            $ref: '#/definitions/controllers.ErrorResponse'
       summary: SignUp
       tags:
       - auth-controller
