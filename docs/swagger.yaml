@@ -25,18 +25,6 @@ definitions:
     required:
     - email
     type: object
-  controllers.ResetUserPassword:
-    properties:
-      password:
-        example: "123456789"
-        type: string
-      passwordrepeat:
-        example: "123456789"
-        type: string
-    required:
-    - password
-    - passwordrepeat
-    type: object
   controllers.SignUpUser:
     properties:
       email:
@@ -53,6 +41,31 @@ definitions:
     - password
     - passwordrepeat
     type: object
+  controllers.UserPassword:
+    properties:
+      password:
+        example: "123456789"
+        type: string
+      passwordrepeat:
+        example: "123456789"
+        type: string
+    required:
+    - password
+    - passwordrepeat
+    type: object
+  controllers.UserProfile:
+    properties:
+      birthDate:
+        example: 01.01.2000
+        type: string
+      mobilePhone:
+        example: +7(705)1112233
+        type: string
+      username:
+        example: Tilda
+        minLength: 2
+        type: string
+    type: object
 host: localhost:3000
 info:
   contact: {}
@@ -60,6 +73,71 @@ info:
   title: Ozinwe API
   version: "1.0"
 paths:
+  /changepassword:
+    post:
+      consumes:
+      - application/json
+      operationId: change-password
+      parameters:
+      - description: changePassword
+        in: body
+        name: changePassword
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.UserPassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: ChangePassword
+      tags:
+      - user-controller
+  /editprofile:
+    get:
+      consumes:
+      - application/json
+      operationId: edit-user-profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: EditUserProfile
+      tags:
+      - user-controller
   /login:
     post:
       consumes:
@@ -173,7 +251,7 @@ paths:
         name: resetPassword
         required: true
         schema:
-          $ref: '#/definitions/controllers.ResetUserPassword'
+          $ref: '#/definitions/controllers.UserPassword'
       produces:
       - application/json
       responses:
@@ -230,6 +308,42 @@ paths:
       summary: SignUp
       tags:
       - auth-controller
+  /updateprofile:
+    put:
+      consumes:
+      - application/json
+      operationId: update-user-profile
+      parameters:
+      - description: updateUserProfile
+        in: body
+        name: updateUserProfile
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.UserProfile'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: UpdateUserProfile
+      tags:
+      - user-controller
 securityDefinitions:
   ApiKeyAuth:
     in: header

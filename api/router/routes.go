@@ -15,10 +15,10 @@ func GetRoute(r *gin.Engine) {
 
 	r.Use(middleware.RequireAuth)
 	r.POST("/logout", controllers.Logout)
-
 	r.GET("/editprofile", controllers.EditUserProfile)
 	r.PUT("/updateprofile", controllers.UpdateUserProfile)
 	r.POST("/changepassword", controllers.ChangePassword)
+
 	r.GET("/home", controllers.Home)
 	r.GET("/all", controllers.GetAllMovies)
 	r.GET("/movie/:id", controllers.GetMovieByID)

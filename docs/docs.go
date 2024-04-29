@@ -15,6 +15,109 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/changepassword": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user-controller"
+                ],
+                "summary": "ChangePassword",
+                "operationId": "change-password",
+                "parameters": [
+                    {
+                        "description": "changePassword",
+                        "name": "changePassword",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.UserPassword"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/editprofile": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user-controller"
+                ],
+                "summary": "EditUserProfile",
+                "operationId": "edit-user-profile",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "consumes": [
@@ -192,7 +295,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.ResetUserPassword"
+                            "$ref": "#/definitions/controllers.UserPassword"
                         }
                     }
                 ],
@@ -275,6 +378,63 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/updateprofile": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user-controller"
+                ],
+                "summary": "UpdateUserProfile",
+                "operationId": "update-user-profile",
+                "parameters": [
+                    {
+                        "description": "updateUserProfile",
+                        "name": "updateUserProfile",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.UserProfile"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -315,23 +475,6 @@ const docTemplate = `{
                 }
             }
         },
-        "controllers.ResetUserPassword": {
-            "type": "object",
-            "required": [
-                "password",
-                "passwordrepeat"
-            ],
-            "properties": {
-                "password": {
-                    "type": "string",
-                    "example": "123456789"
-                },
-                "passwordrepeat": {
-                    "type": "string",
-                    "example": "123456789"
-                }
-            }
-        },
         "controllers.SignUpUser": {
             "type": "object",
             "required": [
@@ -351,6 +494,41 @@ const docTemplate = `{
                 "passwordrepeat": {
                     "type": "string",
                     "example": "123456789"
+                }
+            }
+        },
+        "controllers.UserPassword": {
+            "type": "object",
+            "required": [
+                "password",
+                "passwordrepeat"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "123456789"
+                },
+                "passwordrepeat": {
+                    "type": "string",
+                    "example": "123456789"
+                }
+            }
+        },
+        "controllers.UserProfile": {
+            "type": "object",
+            "properties": {
+                "birthDate": {
+                    "type": "string",
+                    "example": "01.01.2000"
+                },
+                "mobilePhone": {
+                    "type": "string",
+                    "example": "+7(705)1112233"
+                },
+                "username": {
+                    "type": "string",
+                    "minLength": 2,
+                    "example": "Tilda"
                 }
             }
         }
