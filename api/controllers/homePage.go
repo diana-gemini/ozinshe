@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+
 	"github.com/diana-gemini/ozinshe/db/initializers"
 	"github.com/diana-gemini/ozinshe/internal/models"
 
@@ -11,11 +12,22 @@ import (
 
 var limitOfMovie = 5
 
+// Home godoc
+// @Summary Home
+// @Security ApiKeyAuth
+// @Tags main-page-controller
+// @ID home
+// @Accept  json
+// @Produce  json
+// @Success 200 {integer} integer 1
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /home [get]
 func Home(c *gin.Context) {
 	var trendMovies []models.Movie
 	trendResult := initializers.DB.Preload("Categories").
 		Preload("Screenshots").
-		Preload("AgeCategories").
 		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Videos")
 		}).Order("count_of_watch desc").
@@ -23,15 +35,12 @@ func Home(c *gin.Context) {
 		Find(&trendMovies)
 
 	if err := trendResult.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"movie": "Trend movies not found",
-		})
+		newErrorResponse(c, http.StatusNotFound, "trend movies not found")
 	}
 
 	var newMovies []models.Movie
 	newResult := initializers.DB.Preload("Categories").
 		Preload("Screenshots").
-		Preload("AgeCategories").
 		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Videos")
 		}).Order("created_at desc").
@@ -39,71 +48,49 @@ func Home(c *gin.Context) {
 		Find(&newMovies)
 
 	if err := newResult.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"movie": "New projects not found",
-		})
+		newErrorResponse(c, http.StatusNotFound, "new projects not found")
 	}
-
-	var telehikayaMovies []models.Movie
 
 	var types models.Type
 	typesResult := initializers.DB.Where("type_name = ?", "Serial").Find(&types)
-
 	if err := typesResult.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"Type": "Type not found",
-		})
+		newErrorResponse(c, http.StatusNotFound, "serial type not found")
 	}
 
+	var telehikayaMovies []models.Movie
 	typesResult = initializers.DB.
 		Preload("Categories").
 		Preload("Screenshots").
-		Preload("AgeCategories").
 		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Videos")
 		}).Where("type_id = ?", types.ID).
 		Order("created_at desc").
 		Limit(limitOfMovie).
 		Find(&telehikayaMovies)
-
 	if err := typesResult.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"movie": "Telehikaya not found",
-		})
+		newErrorResponse(c, http.StatusNotFound, "telehikaya not found")
 	}
 
-	hororMovies, errhororMovies := GetMoviesByCategory("Horor")
+	hororMovies, errhororMovies := getMoviesByCategory("Horor")
 	if errhororMovies != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"hororMoviesErr": errhororMovies,
-		})
+		newErrorResponse(c, http.StatusNotFound, "horor not found")
 	}
 
-	animeMovies, errAnimeMovies := GetMoviesByCategory("Anime")
+	animeMovies, errAnimeMovies := getMoviesByCategory("Anime")
 	if errAnimeMovies != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"errAnimeMovies": errAnimeMovies,
-		})
+		newErrorResponse(c, http.StatusNotFound, "anime not found")
 	}
 
 	var category []models.Category
-
 	categoryResult := initializers.DB.Find(&category)
-
 	if err := categoryResult.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"Category": "Category not found",
-		})
+		newErrorResponse(c, http.StatusNotFound, "category not found")
 	}
 
 	var ageCategory []models.AgeCategory
-
 	ageCategoryResult := initializers.DB.Find(&ageCategory)
-
 	if err := ageCategoryResult.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"AgeCategory": "Age category not found",
-		})
+		newErrorResponse(c, http.StatusNotFound, "age category not found")
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -117,7 +104,7 @@ func Home(c *gin.Context) {
 	})
 }
 
-func GetMoviesByCategory(categoryName string) ([]models.Movie, error) {
+func getMoviesByCategory(categoryName string) ([]models.Movie, error) {
 	var movies []models.Movie
 	result := initializers.DB.
 		Joins("JOIN movie_category ON movies.id = movie_category.movie_id").
@@ -125,7 +112,6 @@ func GetMoviesByCategory(categoryName string) ([]models.Movie, error) {
 		Where("categories.category_name = ?", categoryName).
 		Preload("Categories").
 		Preload("Screenshots").
-		Preload("AgeCategories").
 		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Videos")
 		}).Limit(limitOfMovie).

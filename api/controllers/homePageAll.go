@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+
 	"github.com/diana-gemini/ozinshe/db/initializers"
 	"github.com/diana-gemini/ozinshe/internal/models"
 
@@ -9,19 +10,27 @@ import (
 	"gorm.io/gorm"
 )
 
+// GetTrends godoc
+// @Summary GetTrends
+// @Security ApiKeyAuth
+// @Tags main-page-controller
+// @ID get-trends
+// @Accept json
+// @Produce json
+// @Success 200 {integer} integer 1
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /trends [get]
 func GetTrends(c *gin.Context) {
 	var movies []models.Movie
 	result := initializers.DB.Preload("Categories").
 		Preload("Screenshots").
-		Preload("AgeCategories").
 		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Videos")
 		}).Order("count_of_watch desc").Find(&movies)
-
 	if err := result.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"movie": "Record not found",
-		})
+		newErrorResponse(c, http.StatusNotFound, "trend movies not found")
 		return
 	}
 
@@ -30,19 +39,27 @@ func GetTrends(c *gin.Context) {
 	})
 }
 
+// GetNewprojects godoc
+// @Summary GetNewprojects
+// @Security ApiKeyAuth
+// @Tags main-page-controller
+// @ID get-new-projects
+// @Accept json
+// @Produce json
+// @Success 200 {integer} integer 1
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /newprojects [get]
 func GetNewprojects(c *gin.Context) {
 	var movies []models.Movie
 	result := initializers.DB.Preload("Categories").
 		Preload("Screenshots").
-		Preload("AgeCategories").
 		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Videos")
 		}).Order("created_at desc").Find(&movies)
-
 	if err := result.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"movie": "Record not found",
-		})
+		newErrorResponse(c, http.StatusNotFound, "new projects not found")
 		return
 	}
 
@@ -51,23 +68,30 @@ func GetNewprojects(c *gin.Context) {
 	})
 }
 
+// GetTelehikaya godoc
+// @Summary GetTelehikaya
+// @Security ApiKeyAuth
+// @Tags main-page-controller
+// @ID get-telehikaya
+// @Accept json
+// @Produce json
+// @Success 200 {integer} integer 1
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /telehikaya [get]
 func GetTelehikaya(c *gin.Context) {
-	var movies []models.Movie
-
 	var types models.Type
 	result := initializers.DB.Where("type_name = ?", "Serial").Find(&types)
-
 	if err := result.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"Type": "Type not found",
-		})
+		newErrorResponse(c, http.StatusNotFound, "serial type not found")
 		return
 	}
 
+	var movies []models.Movie
 	result = initializers.DB.
 		Preload("Categories").
 		Preload("Screenshots").
-		Preload("AgeCategories").
 		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Videos")
 		}).Where("type_id = ?", types.ID).
@@ -75,9 +99,7 @@ func GetTelehikaya(c *gin.Context) {
 		Find(&movies)
 
 	if err := result.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"movie": "Record not found",
-		})
+		newErrorResponse(c, http.StatusNotFound, "telehikaya not found")
 		return
 	}
 
@@ -86,6 +108,18 @@ func GetTelehikaya(c *gin.Context) {
 	})
 }
 
+// Horor godoc
+// @Summary Horor
+// @Security ApiKeyAuth
+// @Tags main-page-controller
+// @ID horor
+// @Accept json
+// @Produce json
+// @Success 200 {integer} integer 1
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /horor [get]
 func Horor(c *gin.Context) {
 	var movies []models.Movie
 	result := initializers.DB.
@@ -94,15 +128,12 @@ func Horor(c *gin.Context) {
 		Where("categories.category_name = ?", "Horor").
 		Preload("Categories").
 		Preload("Screenshots").
-		Preload("AgeCategories").
 		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Videos")
 		}).Find(&movies)
 
 	if err := result.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"movie": "Record not found",
-		})
+		newErrorResponse(c, http.StatusNotFound, "horor not found")
 		return
 	}
 
@@ -111,6 +142,18 @@ func Horor(c *gin.Context) {
 	})
 }
 
+// Anime godoc
+// @Summary Anime
+// @Security ApiKeyAuth
+// @Tags main-page-controller
+// @ID anime
+// @Accept json
+// @Produce json
+// @Success 200 {integer} integer 1
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /anime [get]
 func Anime(c *gin.Context) {
 	var movies []models.Movie
 	result := initializers.DB.
@@ -119,20 +162,16 @@ func Anime(c *gin.Context) {
 		Where("categories.category_name = ?", "Anime").
 		Preload("Categories").
 		Preload("Screenshots").
-		Preload("AgeCategories").
 		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Videos")
 		}).Find(&movies)
 
 	if err := result.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"movie": "Record not found",
-		})
+		newErrorResponse(c, http.StatusNotFound, "anime not found")
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"Anime": movies,
 	})
-
 }

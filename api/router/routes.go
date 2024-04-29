@@ -20,14 +20,15 @@ func GetRoute(r *gin.Engine) {
 	r.POST("/changepassword", controllers.ChangePassword)
 
 	r.GET("/home", controllers.Home)
-	r.GET("/all", controllers.GetAllMovies)
-	r.GET("/movie/:id", controllers.GetMovieByID)
-	r.GET("/movie/:id/series/:seasonid/:seriesid", controllers.GetMovieSeriesByID)
 	r.GET("/trends", controllers.GetTrends)
 	r.GET("/newprojects", controllers.GetNewprojects)
 	r.GET("/telehikaya", controllers.GetTelehikaya)
 	r.GET("/horor", controllers.Horor)
 	r.GET("/anime", controllers.Anime)
+
+	r.GET("/all", controllers.GetAllMovies)
+	r.GET("/movie/:id", controllers.GetMovieByID)
+	r.GET("/movie/:id/series/:seasonid/:seriesid", controllers.GetMovieSeriesByID)
 	r.GET("/search", controllers.Search)
 	r.POST("/movie/:id/favorite", controllers.AddMovieToFavorite)
 	r.DELETE("/movie/:id/favorite", controllers.DeleteMovieFromFavorite)

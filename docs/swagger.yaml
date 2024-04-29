@@ -73,6 +73,35 @@ info:
   title: Ozinwe API
   version: "1.0"
 paths:
+  /anime:
+    get:
+      consumes:
+      - application/json
+      operationId: anime
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Anime
+      tags:
+      - main-page-controller
   /changepassword:
     post:
       consumes:
@@ -138,6 +167,64 @@ paths:
       summary: EditUserProfile
       tags:
       - user-controller
+  /home:
+    get:
+      consumes:
+      - application/json
+      operationId: home
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Home
+      tags:
+      - main-page-controller
+  /horor:
+    get:
+      consumes:
+      - application/json
+      operationId: horor
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Horor
+      tags:
+      - main-page-controller
   /login:
     post:
       consumes:
@@ -201,6 +288,35 @@ paths:
       summary: Logout
       tags:
       - auth-controller
+  /newprojects:
+    get:
+      consumes:
+      - application/json
+      operationId: get-new-projects
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: GetNewprojects
+      tags:
+      - main-page-controller
   /passwordrecover:
     post:
       consumes:
@@ -234,7 +350,7 @@ paths:
             $ref: '#/definitions/controllers.ErrorResponse'
       summary: PasswordRecover
       tags:
-      - password
+      - password-controller
   /resetpassword:
     post:
       consumes:
@@ -273,7 +389,7 @@ paths:
             $ref: '#/definitions/controllers.ErrorResponse'
       summary: ResetPassword
       tags:
-      - password
+      - password-controller
   /signup:
     post:
       consumes:
@@ -308,6 +424,64 @@ paths:
       summary: SignUp
       tags:
       - auth-controller
+  /telehikaya:
+    get:
+      consumes:
+      - application/json
+      operationId: get-telehikaya
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: GetTelehikaya
+      tags:
+      - main-page-controller
+  /trends:
+    get:
+      consumes:
+      - application/json
+      operationId: get-trends
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: GetTrends
+      tags:
+      - main-page-controller
   /updateprofile:
     put:
       consumes:
