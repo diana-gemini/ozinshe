@@ -35,7 +35,7 @@ func Home(c *gin.Context) {
 		Find(&trendMovies)
 
 	if err := trendResult.Error; err != nil {
-		newErrorResponse(c, http.StatusNotFound, "trend movies not found")
+		NewErrorResponse(c, http.StatusNotFound, "trend movies not found")
 	}
 
 	var newMovies []models.Movie
@@ -48,13 +48,13 @@ func Home(c *gin.Context) {
 		Find(&newMovies)
 
 	if err := newResult.Error; err != nil {
-		newErrorResponse(c, http.StatusNotFound, "new projects not found")
+		NewErrorResponse(c, http.StatusNotFound, "new projects not found")
 	}
 
 	var types models.Type
 	typesResult := initializers.DB.Where("type_name = ?", "Serial").Find(&types)
 	if err := typesResult.Error; err != nil {
-		newErrorResponse(c, http.StatusNotFound, "serial type not found")
+		NewErrorResponse(c, http.StatusNotFound, "serial type not found")
 	}
 
 	var telehikayaMovies []models.Movie
@@ -68,29 +68,29 @@ func Home(c *gin.Context) {
 		Limit(limitOfMovie).
 		Find(&telehikayaMovies)
 	if err := typesResult.Error; err != nil {
-		newErrorResponse(c, http.StatusNotFound, "telehikaya not found")
+		NewErrorResponse(c, http.StatusNotFound, "telehikaya not found")
 	}
 
 	hororMovies, errhororMovies := getMoviesByCategory("Horor")
 	if errhororMovies != nil {
-		newErrorResponse(c, http.StatusNotFound, "horor not found")
+		NewErrorResponse(c, http.StatusNotFound, "horor not found")
 	}
 
 	animeMovies, errAnimeMovies := getMoviesByCategory("Anime")
 	if errAnimeMovies != nil {
-		newErrorResponse(c, http.StatusNotFound, "anime not found")
+		NewErrorResponse(c, http.StatusNotFound, "anime not found")
 	}
 
 	var category []models.Category
 	categoryResult := initializers.DB.Find(&category)
 	if err := categoryResult.Error; err != nil {
-		newErrorResponse(c, http.StatusNotFound, "category not found")
+		NewErrorResponse(c, http.StatusNotFound, "category not found")
 	}
 
 	var ageCategory []models.AgeCategory
 	ageCategoryResult := initializers.DB.Find(&ageCategory)
 	if err := ageCategoryResult.Error; err != nil {
-		newErrorResponse(c, http.StatusNotFound, "age category not found")
+		NewErrorResponse(c, http.StatusNotFound, "age category not found")
 	}
 
 	c.JSON(http.StatusOK, gin.H{

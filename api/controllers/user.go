@@ -41,24 +41,24 @@ func Signup(c *gin.Context) {
 	var userInput SignUpUser
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		NewErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
 	if validations.IsUniqueValue("users", "email", userInput.Email) {
-		newErrorResponse(c, http.StatusBadRequest, "email is already exist")
+		NewErrorResponse(c, http.StatusBadRequest, "email is already exist")
 		return
 	}
 
 	if !validations.CheckPassword(userInput.Password, userInput.RepeatPassword) {
-		newErrorResponse(c, http.StatusBadRequest, "passwords should be the same")
+		NewErrorResponse(c, http.StatusBadRequest, "passwords should be the same")
 		return
 	}
 
 	hashPassword, err := bcrypt.GenerateFromPassword([]byte(userInput.Password), 10)
 
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, "failed to hash password")
+		NewErrorResponse(c, http.StatusInternalServerError, "failed to hash password")
 		return
 	}
 
@@ -71,7 +71,7 @@ func Signup(c *gin.Context) {
 	result := initializers.DB.Create(&user)
 
 	if result.Error != nil {
-		newErrorResponse(c, http.StatusInternalServerError, "internal server error")
+		NewErrorResponse(c, http.StatusInternalServerError, "internal server error")
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -100,20 +100,20 @@ func Login(c *gin.Context) {
 	var userInput AuthUser
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		NewErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
 	var user models.User
 	initializers.DB.First(&user, "email = ?", userInput.Email)
 	if user.ID == 0 {
-		newErrorResponse(c, http.StatusBadRequest, "invalid email")
+		NewErrorResponse(c, http.StatusBadRequest, "invalid email")
 		return
 	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userInput.Password))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid password")
+		NewErrorResponse(c, http.StatusBadRequest, "invalid password")
 		return
 	}
 
@@ -124,7 +124,7 @@ func Login(c *gin.Context) {
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET")))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "failed to create token")
+		NewErrorResponse(c, http.StatusBadRequest, "failed to create token")
 		return
 	}
 
@@ -170,7 +170,7 @@ func EditUserProfile(c *gin.Context) {
 	var user models.User
 	result := initializers.DB.Select("username", "email", "mobile_phone", "birth_date").First(&user, id)
 	if err := result.Error; err != nil {
-		newErrorResponse(c, http.StatusNotFound, "user not found")
+		NewErrorResponse(c, http.StatusNotFound, "user not found")
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -207,7 +207,7 @@ func UpdateUserProfile(c *gin.Context) {
 	var userInput UserProfile
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		NewErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
@@ -215,7 +215,7 @@ func UpdateUserProfile(c *gin.Context) {
 	result := initializers.DB.First(&user, id)
 
 	if err := result.Error; err != nil {
-		newErrorResponse(c, http.StatusNotFound, "user not found")
+		NewErrorResponse(c, http.StatusNotFound, "user not found")
 		return
 	}
 
@@ -228,7 +228,7 @@ func UpdateUserProfile(c *gin.Context) {
 	result = initializers.DB.Model(&user).Updates(&updateUser)
 
 	if result.Error != nil {
-		newErrorResponse(c, http.StatusInternalServerError, "user data is not updated")
+		NewErrorResponse(c, http.StatusInternalServerError, "user data is not updated")
 		return
 	}
 
@@ -264,19 +264,19 @@ func ChangePassword(c *gin.Context) {
 	var userInput UserPassword
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		NewErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
 	if !validations.CheckPassword(userInput.Password, userInput.RepeatPassword) {
-		newErrorResponse(c, http.StatusBadRequest, "passwords should be the same")
+		NewErrorResponse(c, http.StatusBadRequest, "passwords should be the same")
 		return
 	}
 
 	hashPassword, err := bcrypt.GenerateFromPassword([]byte(userInput.Password), 10)
 
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, "failed to hash password")
+		NewErrorResponse(c, http.StatusInternalServerError, "failed to hash password")
 		return
 	}
 
@@ -284,7 +284,7 @@ func ChangePassword(c *gin.Context) {
 	result := initializers.DB.First(&user, id)
 
 	if err := result.Error; err != nil {
-		newErrorResponse(c, http.StatusNotFound, "user not found")
+		NewErrorResponse(c, http.StatusNotFound, "user not found")
 		return
 	}
 
@@ -295,7 +295,7 @@ func ChangePassword(c *gin.Context) {
 	result = initializers.DB.Model(&user).Updates(&updateUserPassword)
 
 	if result.Error != nil {
-		newErrorResponse(c, http.StatusInternalServerError, "user password is not changed")
+		NewErrorResponse(c, http.StatusInternalServerError, "user password is not changed")
 		return
 	}
 
@@ -326,7 +326,7 @@ func PasswordRecover(c *gin.Context) {
 	var userInput RecoverUserPassword
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		NewErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
@@ -334,7 +334,7 @@ func PasswordRecover(c *gin.Context) {
 	initializers.DB.First(&user, "email = ?", userInput.Email)
 
 	if user.ID == 0 {
-		newErrorResponse(c, http.StatusBadRequest, "user not found")
+		NewErrorResponse(c, http.StatusBadRequest, "user not found")
 		return
 	}
 
@@ -343,7 +343,7 @@ func PasswordRecover(c *gin.Context) {
 
 	err := sendResetEmail(userInput.Email, token)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, "failed to send reset email")
+		NewErrorResponse(c, http.StatusInternalServerError, "failed to send reset email")
 		return
 	}
 
@@ -389,30 +389,30 @@ func sendResetEmail(email, token string) error {
 func ResetPassword(c *gin.Context) {
 	token := c.Query("token")
 	if token == "" {
-		newErrorResponse(c, http.StatusBadRequest, "token not found in URL")
+		NewErrorResponse(c, http.StatusBadRequest, "token not found in URL")
 		return
 	}
 
 	var password UserPassword
 	if err := c.ShouldBindJSON(&password); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
+		NewErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
 	email, ok := resetTokens[token]
 	if !ok {
-		newErrorResponse(c, http.StatusBadRequest, "invalid reset token")
+		NewErrorResponse(c, http.StatusBadRequest, "invalid reset token")
 		return
 	}
 
 	if !validations.CheckPassword(password.Password, password.RepeatPassword) {
-		newErrorResponse(c, http.StatusBadRequest, "passwords should be the same")
+		NewErrorResponse(c, http.StatusBadRequest, "passwords should be the same")
 		return
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password.Password), bcrypt.DefaultCost)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, "failed to generate password hash")
+		NewErrorResponse(c, http.StatusInternalServerError, "failed to generate password hash")
 		return
 	}
 
@@ -422,7 +422,7 @@ func ResetPassword(c *gin.Context) {
 	result := initializers.DB.Where("email = ?", email).First(&user)
 
 	if err := result.Error; err != nil {
-		newErrorResponse(c, http.StatusNotFound, "email not found")
+		NewErrorResponse(c, http.StatusNotFound, "email not found")
 		return
 	}
 
@@ -433,7 +433,7 @@ func ResetPassword(c *gin.Context) {
 	result = initializers.DB.Model(&user).Updates(&updateUserPassword)
 
 	if result.Error != nil {
-		newErrorResponse(c, http.StatusInternalServerError, "password not update")
+		NewErrorResponse(c, http.StatusInternalServerError, "password not update")
 		return
 	}
 

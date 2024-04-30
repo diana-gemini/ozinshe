@@ -30,7 +30,7 @@ func GetTrends(c *gin.Context) {
 			return db.Preload("Videos")
 		}).Order("count_of_watch desc").Find(&movies)
 	if err := result.Error; err != nil {
-		newErrorResponse(c, http.StatusNotFound, "trend movies not found")
+		NewErrorResponse(c, http.StatusNotFound, "trend movies not found")
 		return
 	}
 
@@ -59,7 +59,7 @@ func GetNewprojects(c *gin.Context) {
 			return db.Preload("Videos")
 		}).Order("created_at desc").Find(&movies)
 	if err := result.Error; err != nil {
-		newErrorResponse(c, http.StatusNotFound, "new projects not found")
+		NewErrorResponse(c, http.StatusNotFound, "new projects not found")
 		return
 	}
 
@@ -84,7 +84,7 @@ func GetTelehikaya(c *gin.Context) {
 	var types models.Type
 	result := initializers.DB.Where("type_name = ?", "Serial").Find(&types)
 	if err := result.Error; err != nil {
-		newErrorResponse(c, http.StatusNotFound, "serial type not found")
+		NewErrorResponse(c, http.StatusNotFound, "serial type not found")
 		return
 	}
 
@@ -99,7 +99,7 @@ func GetTelehikaya(c *gin.Context) {
 		Find(&movies)
 
 	if err := result.Error; err != nil {
-		newErrorResponse(c, http.StatusNotFound, "telehikaya not found")
+		NewErrorResponse(c, http.StatusNotFound, "telehikaya not found")
 		return
 	}
 
@@ -108,11 +108,11 @@ func GetTelehikaya(c *gin.Context) {
 	})
 }
 
-// Horor godoc
-// @Summary Horor
+// GetHoror godoc
+// @Summary GetHoror
 // @Security ApiKeyAuth
 // @Tags main-page-controller
-// @ID horor
+// @ID get-horor
 // @Accept json
 // @Produce json
 // @Success 200 {integer} integer 1
@@ -133,7 +133,7 @@ func Horor(c *gin.Context) {
 		}).Find(&movies)
 
 	if err := result.Error; err != nil {
-		newErrorResponse(c, http.StatusNotFound, "horor not found")
+		NewErrorResponse(c, http.StatusNotFound, "horor not found")
 		return
 	}
 
@@ -142,11 +142,11 @@ func Horor(c *gin.Context) {
 	})
 }
 
-// Anime godoc
-// @Summary Anime
+// GetAnime godoc
+// @Summary GetAnime
 // @Security ApiKeyAuth
 // @Tags main-page-controller
-// @ID anime
+// @ID get-anime
 // @Accept json
 // @Produce json
 // @Success 200 {integer} integer 1
@@ -167,7 +167,7 @@ func Anime(c *gin.Context) {
 		}).Find(&movies)
 
 	if err := result.Error; err != nil {
-		newErrorResponse(c, http.StatusNotFound, "anime not found")
+		NewErrorResponse(c, http.StatusNotFound, "anime not found")
 		return
 	}
 

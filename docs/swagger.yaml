@@ -73,11 +73,11 @@ info:
   title: Ozinwe API
   version: "1.0"
 paths:
-  /anime:
+  /all:
     get:
       consumes:
       - application/json
-      operationId: anime
+      operationId: get-all-movies
       produces:
       - application/json
       responses:
@@ -99,7 +99,36 @@ paths:
             $ref: '#/definitions/controllers.ErrorResponse'
       security:
       - ApiKeyAuth: []
-      summary: Anime
+      summary: GetAllMovies
+      tags:
+      - movie-controller
+  /anime:
+    get:
+      consumes:
+      - application/json
+      operationId: get-anime
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: GetAnime
       tags:
       - main-page-controller
   /changepassword:
@@ -200,7 +229,7 @@ paths:
     get:
       consumes:
       - application/json
-      operationId: horor
+      operationId: get-horor
       produces:
       - application/json
       responses:
@@ -222,7 +251,7 @@ paths:
             $ref: '#/definitions/controllers.ErrorResponse'
       security:
       - ApiKeyAuth: []
-      summary: Horor
+      summary: GetHoror
       tags:
       - main-page-controller
   /login:
@@ -288,6 +317,80 @@ paths:
       summary: Logout
       tags:
       - auth-controller
+  /movie/:id:
+    get:
+      consumes:
+      - application/json
+      operationId: get-movie-by-id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: GetMovieByID
+      tags:
+      - movie-controller
+  /movie/:id/series/:seasonid/:seriesid:
+    get:
+      consumes:
+      - application/json
+      operationId: get-movie-series-by-id
+      parameters:
+      - description: movieid
+        in: path
+        name: movieid
+        required: true
+        type: string
+      - description: seasonid
+        in: path
+        name: seasonid
+        required: true
+        type: string
+      - description: seriesid
+        in: path
+        name: seriesid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: GetMovieSeriesByID
+      tags:
+      - movie-controller
   /newprojects:
     get:
       consumes:
@@ -390,6 +493,41 @@ paths:
       summary: ResetPassword
       tags:
       - password-controller
+  /search:
+    get:
+      consumes:
+      - application/json
+      operationId: search
+      parameters:
+      - description: search param received in the URL
+        in: query
+        name: search
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Search
+      tags:
+      - search-controller
   /signup:
     post:
       consumes:

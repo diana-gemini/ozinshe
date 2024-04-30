@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"github.com/diana-gemini/ozinshe/db/initializers"
-	"github.com/diana-gemini/ozinshe/internal/models"
 	"strings"
 	"time"
+
+	"github.com/diana-gemini/ozinshe/db/initializers"
+	"github.com/diana-gemini/ozinshe/internal/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -41,8 +42,7 @@ func RequireAuth(c *gin.Context) {
 	})
 
 	if err != nil || !token.Valid {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		c.Abort()
+		c.AbortWithStatusJSON(http.StatusUnauthorized, "unauthorized")
 		return
 	}
 
@@ -55,9 +55,7 @@ func RequireAuth(c *gin.Context) {
 		initializers.DB.Find(&user, claims["sub"])
 
 		if user.ID == 0 {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "Unauthorized",
-			})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, "unauthorized")
 			return
 		}
 
@@ -78,24 +76,18 @@ func IsAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authUser, exists := c.Get("authUser")
 		if !exists {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "Failed to get the user",
-			})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, "failed to get the user")
 			return
 		}
 
 		user, ok := authUser.(AuthUser)
 		if !ok {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "Unauthorized",
-			})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, "unauthorized")
 			return
 		}
 
 		if user.Role != 1 {
-			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
-				"error": "Forbidden",
-			})
+			c.AbortWithStatusJSON(http.StatusForbidden, "forbidden")
 			return
 		}
 

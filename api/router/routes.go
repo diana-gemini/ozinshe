@@ -18,23 +18,21 @@ func GetRoute(r *gin.Engine) {
 	r.GET("/editprofile", controllers.EditUserProfile)
 	r.PUT("/updateprofile", controllers.UpdateUserProfile)
 	r.POST("/changepassword", controllers.ChangePassword)
-
 	r.GET("/home", controllers.Home)
 	r.GET("/trends", controllers.GetTrends)
 	r.GET("/newprojects", controllers.GetNewprojects)
 	r.GET("/telehikaya", controllers.GetTelehikaya)
 	r.GET("/horor", controllers.Horor)
 	r.GET("/anime", controllers.Anime)
-
+	r.GET("/search", controllers.Search)
 	r.GET("/all", controllers.GetAllMovies)
+
 	r.GET("/movie/:id", controllers.GetMovieByID)
 	r.GET("/movie/:id/series/:seasonid/:seriesid", controllers.GetMovieSeriesByID)
-	r.GET("/search", controllers.Search)
+
 	r.POST("/movie/:id/favorite", controllers.AddMovieToFavorite)
 	r.DELETE("/movie/:id/favorite", controllers.DeleteMovieFromFavorite)
 	r.GET("/movie/favorite", controllers.GetAllFavoriteMovies)
-
-	//r.POST("/testseason", controllers.TestSeason)
 
 	admin := r.Group("/admin")
 	admin.Use(middleware.IsAdmin())
