@@ -400,7 +400,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/movie/:id": {
+        "/movie/{id}": {
             "get": {
                 "security": [
                     {
@@ -418,6 +418,15 @@ const docTemplate = `{
                 ],
                 "summary": "GetMovieByID",
                 "operationId": "get-movie-by-id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -427,6 +436,12 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/controllers.ErrorResponse"
                         }
@@ -446,7 +461,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/movie/:id/series/:seasonid/:seriesid": {
+        "/movie/{id}/series/{seasonid}/{seriesid}": {
             "get": {
                 "security": [
                     {
@@ -466,21 +481,21 @@ const docTemplate = `{
                 "operationId": "get-movie-series-by-id",
                 "parameters": [
                     {
-                        "type": "string",
+                        "type": "integer",
                         "description": "movieid",
-                        "name": "movieid",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "type": "string",
+                        "type": "integer",
                         "description": "seasonid",
                         "name": "seasonid",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "type": "string",
+                        "type": "integer",
                         "description": "seriesid",
                         "name": "seriesid",
                         "in": "path",

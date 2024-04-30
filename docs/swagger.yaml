@@ -317,11 +317,17 @@ paths:
       summary: Logout
       tags:
       - auth-controller
-  /movie/:id:
+  /movie/{id}:
     get:
       consumes:
       - application/json
       operationId: get-movie-by-id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -331,6 +337,10 @@ paths:
             type: integer
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
         "500":
@@ -346,7 +356,7 @@ paths:
       summary: GetMovieByID
       tags:
       - movie-controller
-  /movie/:id/series/:seasonid/:seriesid:
+  /movie/{id}/series/{seasonid}/{seriesid}:
     get:
       consumes:
       - application/json
@@ -354,19 +364,19 @@ paths:
       parameters:
       - description: movieid
         in: path
-        name: movieid
+        name: id
         required: true
-        type: string
+        type: integer
       - description: seasonid
         in: path
         name: seasonid
         required: true
-        type: string
+        type: integer
       - description: seriesid
         in: path
         name: seriesid
         required: true
-        type: string
+        type: integer
       produces:
       - application/json
       responses:

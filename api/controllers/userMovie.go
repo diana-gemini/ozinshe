@@ -50,11 +50,12 @@ func GetAllMovies(c *gin.Context) {
 // @ID get-movie-by-id
 // @Accept  json
 // @Produce  json
+// @Param id path integer true "id"
 // @Success 200 {integer} integer 1
-// @Failure 400 {object} ErrorResponse
+// @Failure 400,404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Failure default {object} ErrorResponse
-// @Router /movie/:id [get]
+// @Router /movie/{id} [get]
 func GetMovieByID(c *gin.Context) {
 	authUser := helpers.GetAuthUser(c)
 	userID := authUser.ID
@@ -112,14 +113,14 @@ func GetMovieByID(c *gin.Context) {
 // @ID get-movie-series-by-id
 // @Accept  json
 // @Produce  json
-// @Param movieid path string true "movieid"
-// @Param seasonid path string true "seasonid"
-// @Param seriesid path string true "seriesid"
+// @Param id path integer true "movieid"
+// @Param seasonid path integer true "seasonid"
+// @Param seriesid path integer true "seriesid"
 // @Success 200 {integer} integer 1
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Failure default {object} ErrorResponse
-// @Router /movie/:id/series/:seasonid/:seriesid [get]
+// @Router /movie/{id}/series/{seasonid}/{seriesid} [get]
 func GetMovieSeriesByID(c *gin.Context) {
 	movieID := c.Param("id")
 
@@ -147,7 +148,14 @@ func GetMovieSeriesByID(c *gin.Context) {
 		return
 	}
 
+	if len(movie.Seasons) <= seasonID-1 || len(movie.Seasons[seasonID-1].Videos) <= seriesID-1 {
+		NewErrorResponse(c, http.StatusNotFound, "series not found")
+		return
+	}
+
+	seriesLink := movie.Seasons[seasonID-1].Videos[seriesID-1].Link
+
 	c.JSON(http.StatusOK, gin.H{
-		"Series": movie.Seasons[seasonID-1].Videos[seriesID-1].Link,
+		"Series": seriesLink,
 	})
 }

@@ -26,7 +26,6 @@ func GetRoute(r *gin.Engine) {
 	r.GET("/anime", controllers.Anime)
 	r.GET("/search", controllers.Search)
 	r.GET("/all", controllers.GetAllMovies)
-
 	r.GET("/movie/:id", controllers.GetMovieByID)
 	r.GET("/movie/:id/series/:seasonid/:seriesid", controllers.GetMovieSeriesByID)
 
