@@ -17,6 +17,15 @@ definitions:
       message:
         type: string
     type: object
+  controllers.NewCategory:
+    properties:
+      categoryName:
+        example: Anime
+        minLength: 2
+        type: string
+    required:
+    - categoryName
+    type: object
   controllers.RecoverUserPassword:
     properties:
       email:
@@ -73,6 +82,169 @@ info:
   title: Ozinwe API
   version: "1.0"
 paths:
+  /admin/category/{id}/delete:
+    delete:
+      consumes:
+      - application/json
+      operationId: delete-category
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: DeleteCategory
+      tags:
+      - admin-category-controller
+  /admin/category/{id}/edit:
+    get:
+      consumes:
+      - application/json
+      operationId: edit-category
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: EditCategory
+      tags:
+      - admin-category-controller
+  /admin/category/{id}/update:
+    put:
+      consumes:
+      - application/json
+      operationId: update-category
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: categoryName
+        in: body
+        name: categoryName
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.NewCategory'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: UpdateCategory
+      tags:
+      - admin-category-controller
+  /admin/category/create:
+    post:
+      consumes:
+      - application/json
+      operationId: create-category
+      parameters:
+      - description: categoryName
+        in: body
+        name: categoryName
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.NewCategory'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: CreateCategory
+      tags:
+      - admin-category-controller
   /all:
     get:
       consumes:
@@ -514,6 +686,45 @@ paths:
       summary: GetMovieSeriesByID
       tags:
       - movie-controller
+  /movie/create:
+    post:
+      consumes:
+      - application/json
+      operationId: create-movie
+      parameters:
+      - description: movieID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: CreateMovie
+      tags:
+      - admin-movie-controller
   /movie/favorite:
     get:
       consumes:

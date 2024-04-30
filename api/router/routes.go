@@ -35,6 +35,13 @@ func GetRoute(r *gin.Engine) {
 	admin := r.Group("/admin")
 	admin.Use(middleware.IsAdmin())
 	{
+		admin.POST("/category/create", controllers.CreateCategory)
+		admin.GET("/category/:id/edit", controllers.EditCategory)
+		admin.PUT("/category/:id/update", controllers.UpdateCategory)
+		admin.DELETE("/category/:id/delete", controllers.DeleteCategory)
+
+		//
+
 		admin.POST("/movie/create", controllers.CreateMovie)
 		admin.GET("/movie/:id/edit", controllers.EditMovie)
 		admin.PUT("/movie/:id/update", controllers.UpdateMovie)
@@ -43,10 +50,6 @@ func GetRoute(r *gin.Engine) {
 		admin.POST("/movie/:id/season/create", controllers.CreateSeason)
 		admin.PUT("/movie/:id/season/:seasonid/update", controllers.UpdateSeason)
 		admin.DELETE("/movie/:id/season/:seasonid/delete", controllers.DeleteSeason)
-
-		admin.POST("/category/create", controllers.CreateCategory)
-		admin.PUT("/category/:id/update", controllers.UpdateCategory)
-		admin.DELETE("/category/:id/delete", controllers.DeleteCategory)
 
 		admin.POST("/type/create", controllers.CreateTypeOfProject)
 		admin.PUT("/type/:id/update", controllers.UpdateTypeOfProject)

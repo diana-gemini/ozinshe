@@ -2,26 +2,54 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
+
 	"github.com/diana-gemini/ozinshe/db/initializers"
 	"github.com/diana-gemini/ozinshe/internal/models"
 	"github.com/diana-gemini/ozinshe/internal/validations"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
+type NewMovie struct {
+	NameOfProject string   `form:"nameOfProject" binding:"required" example:"Name of Film"`
+	Categories    []string `form:"categories[]" binding:"required"`
+	TypeID        string   `form:"typeID" binding:"required" example:"Film"`
+	AgeCategoryID string   `form:"ageCategoryID" binding:"required" example:"13-17"`
+	Year          string   `form:"year" binding:"required" example:"2001"`
+	Timing        string   `form:"timing" binding:"required" example:"89"`
+	Keywords      string   `form:"keywords" binding:"required" example:"Film, Horor, Anime"`
+	Description   string   `form:"description" binding:"required" example:"Konec XX veka. Neskolko let nazad, eshyo devochkoj..."`
+	Director      string   `form:"director" binding:"required" example:"Tomokadzu Tokoro, Hideki Tonokacu"`
+	Producer      string   `form:"producer" binding:"required" example:"Satosi Fudzii, Yosiyuki Fudetani"`
+}
+
+// CreateMovie godoc
+// @Summary CreateMovie
+// @Security ApiKeyAuth
+// @Tags admin-movie-controller
+// @ID create-movie
+// @Accept  json
+// @Produce  json
+// @Param id path integer true "movieID"
+// @Success 200 {integer} integer 1
+// @Failure 400,404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /movie/create [post]
 func CreateMovie(c *gin.Context) {
-	nameOfProject := c.PostForm("nameOfProject")
-	categoriesArray := c.PostFormArray("categories")
-	typeID := c.PostForm("typeID")
-	ageCategoryID := c.PostForm("ageCategoryID")
-	year := c.PostForm("year")
-	timing := c.PostForm("timing")
-	keywords := c.PostForm("keywords")
-	description := c.PostForm("description")
-	director := c.PostForm("director")
-	producer := c.PostForm("producer")
+	var newMovie NewMovie
+	// nameOfProject := c.PostForm("nameOfProject")
+	// categoriesArray := c.PostFormArray("categories")
+	// typeID := c.PostForm("typeID")
+	// ageCategoryID := c.PostForm("ageCategoryID")
+	// year := c.PostForm("year")
+	// timing := c.PostForm("timing")
+	// keywords := c.PostForm("keywords")
+	// description := c.PostForm("description")
+	// director := c.PostForm("director")
+	// producer := c.PostForm("producer")
 
 	err := c.Request.ParseMultipartForm(10 << 20)
 	if err != nil {
@@ -34,7 +62,7 @@ func CreateMovie(c *gin.Context) {
 	screenshotsArray := form.File["screenshots"]
 	cover := form.File["cover"]
 
-	if validations.IsUniqueValue("movies", "name_of_project", nameOfProject) {
+	if validations.IsUniqueValue("movies", "name_of_project", newMovie.NameOfProject) {
 		c.JSON(http.StatusConflict, gin.H{
 			"Name": "The name of movie is already exist!",
 		})
@@ -43,7 +71,7 @@ func CreateMovie(c *gin.Context) {
 
 	var categories []models.Category
 
-	for _, category := range categoriesArray {
+	for _, category := range newMovie.Categories {
 		if !validations.IsExistValue("categories", "id", category) {
 			c.JSON(http.StatusUnprocessableEntity, gin.H{
 				"CategoryID": "The category does not exist!",
@@ -69,14 +97,14 @@ func CreateMovie(c *gin.Context) {
 		categories = append(categories, tempCategory)
 	}
 
-	if !validations.IsExistValue("types", "id", typeID) {
+	if !validations.IsExistValue("types", "id", newMovie.TypeID) {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"TypeID": "The type does not exist!",
 		})
 		return
 	}
 
-	typeIDInt, err := strconv.Atoi(typeID)
+	typeIDInt, err := strconv.Atoi(newMovie.TypeID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err,
@@ -84,14 +112,14 @@ func CreateMovie(c *gin.Context) {
 		return
 	}
 
-	if !validations.IsExistValue("age_categories", "id", ageCategoryID) {
+	if !validations.IsExistValue("age_categories", "id", newMovie.AgeCategoryID) {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"AgeCategoryID": "The age category does not exist!",
 		})
 		return
 	}
 
-	ageCategoryIDInt, err := strconv.Atoi(ageCategoryID)
+	ageCategoryIDInt, err := strconv.Atoi(newMovie.AgeCategoryID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err,
@@ -132,17 +160,17 @@ func CreateMovie(c *gin.Context) {
 	}
 
 	movie := models.Movie{
-		NameOfProject: nameOfProject,
+		NameOfProject: newMovie.NameOfProject,
 		Categories:    categories,
 		TypeID:        uint(typeIDInt),
 		AgeCategoryID: uint(ageCategoryIDInt),
 		Screenshots:   screenshots,
-		Year:          year,
-		Timing:        timing,
-		Keywords:      keywords,
-		Description:   description,
-		Director:      director,
-		Producer:      producer,
+		Year:          newMovie.Year,
+		Timing:        newMovie.Timing,
+		Keywords:      newMovie.Keywords,
+		Description:   newMovie.Description,
+		Director:      newMovie.Director,
+		Producer:      newMovie.Producer,
 		Cover:         coverURL[0],
 	}
 
