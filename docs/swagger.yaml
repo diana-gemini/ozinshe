@@ -89,6 +89,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -116,6 +120,10 @@ paths:
             type: integer
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
         "500":
@@ -154,6 +162,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -181,6 +193,10 @@ paths:
             type: integer
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
         "500":
@@ -212,6 +228,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -239,6 +259,10 @@ paths:
             type: integer
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
         "500":
@@ -277,6 +301,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -302,6 +330,10 @@ paths:
             type: integer
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
         "500":
@@ -356,6 +388,83 @@ paths:
       summary: GetMovieByID
       tags:
       - movie-controller
+  /movie/{id}/favorite:
+    delete:
+      consumes:
+      - application/json
+      operationId: delete-movie-from-favorite
+      parameters:
+      - description: movieID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: DeleteMovieFromFavorite
+      tags:
+      - movie-controller
+    post:
+      consumes:
+      - application/json
+      operationId: add-movie-to-favorite
+      parameters:
+      - description: movieID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: AddMovieToFavorite
+      tags:
+      - movie-controller
   /movie/{id}/series/{seasonid}/{seriesid}:
     get:
       consumes:
@@ -388,6 +497,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -399,6 +512,39 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: GetMovieSeriesByID
+      tags:
+      - movie-controller
+  /movie/favorite:
+    get:
+      consumes:
+      - application/json
+      operationId: get-all-favorite-movies
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: GetAllFavoriteMovies
       tags:
       - movie-controller
   /newprojects:
@@ -415,6 +561,10 @@ paths:
             type: integer
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
         "500":
@@ -451,6 +601,10 @@ paths:
             type: integer
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
         "500":
@@ -492,6 +646,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -523,6 +681,10 @@ paths:
             type: integer
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
         "500":
@@ -561,6 +723,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -586,6 +752,10 @@ paths:
             type: integer
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
         "500":
@@ -615,6 +785,10 @@ paths:
             type: integer
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
         "500":
@@ -651,6 +825,10 @@ paths:
             type: integer
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/controllers.ErrorResponse'
         "500":

@@ -20,7 +20,7 @@ var limitOfMovie = 5
 // @Accept  json
 // @Produce  json
 // @Success 200 {integer} integer 1
-// @Failure 400 {object} ErrorResponse
+// @Failure 400,404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Failure default {object} ErrorResponse
 // @Router /home [get]

@@ -33,7 +33,7 @@ type SignUpUser struct {
 // @Produce  json
 // @Param signupRequest body SignUpUser true "signupRequest"
 // @Success 200 {integer} integer 1
-// @Failure 400 {object} ErrorResponse
+// @Failure 400,404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Failure default {object} ErrorResponse
 // @Router /signup [post]
@@ -92,7 +92,7 @@ type AuthUser struct {
 // @Produce  json
 // @Param loginRequest body AuthUser true "loginRequest"
 // @Success 200 {integer} integer 1
-// @Failure 400 {object} ErrorResponse
+// @Failure 400,404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Failure default {object} ErrorResponse
 // @Router /login [post]
@@ -141,7 +141,7 @@ func Login(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Success 200 {integer} integer 1
-// @Failure 400 {object} ErrorResponse
+// @Failure 400,404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Failure default {object} ErrorResponse
 // @Router /logout [post]
@@ -159,7 +159,7 @@ func Logout(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Success 200 {integer} integer 1
-// @Failure 400 {object} ErrorResponse
+// @Failure 400,404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Failure default {object} ErrorResponse
 // @Router /editprofile [get]
@@ -196,7 +196,7 @@ type UserProfile struct {
 // @Produce  json
 // @Param updateUserProfile body UserProfile true "updateUserProfile"
 // @Success 200 {integer} integer 1
-// @Failure 400 {object} ErrorResponse
+// @Failure 400,404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Failure default {object} ErrorResponse
 // @Router /updateprofile [put]
@@ -253,7 +253,7 @@ type UserPassword struct {
 // @Produce  json
 // @Param changePassword body UserPassword true "changePassword"
 // @Success 200 {integer} integer 1
-// @Failure 400 {object} ErrorResponse
+// @Failure 400,404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Failure default {object} ErrorResponse
 // @Router /changepassword [post]
@@ -318,7 +318,7 @@ type RecoverUserPassword struct {
 // @Produce  json
 // @Param email body RecoverUserPassword true "email"
 // @Success 200 {integer} integer 1
-// @Failure 400 {object} ErrorResponse
+// @Failure 400,404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Failure default {object} ErrorResponse
 // @Router /passwordrecover [post]
@@ -382,7 +382,7 @@ func sendResetEmail(email, token string) error {
 // @Param token query string true "token received in the URL"
 // @Param resetPassword body UserPassword true "resetPassword"
 // @Success 200 {integer} integer 1
-// @Failure 400 {object} ErrorResponse
+// @Failure 400,404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Failure default {object} ErrorResponse
 // @Router /resetpassword [post]

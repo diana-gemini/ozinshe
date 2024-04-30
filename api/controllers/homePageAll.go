@@ -18,7 +18,7 @@ import (
 // @Accept json
 // @Produce json
 // @Success 200 {integer} integer 1
-// @Failure 400 {object} ErrorResponse
+// @Failure 400,404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Failure default {object} ErrorResponse
 // @Router /trends [get]
@@ -47,7 +47,7 @@ func GetTrends(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {integer} integer 1
-// @Failure 400 {object} ErrorResponse
+// @Failure 400,404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Failure default {object} ErrorResponse
 // @Router /newprojects [get]
@@ -76,7 +76,7 @@ func GetNewprojects(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {integer} integer 1
-// @Failure 400 {object} ErrorResponse
+// @Failure 400,404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Failure default {object} ErrorResponse
 // @Router /telehikaya [get]
@@ -116,7 +116,7 @@ func GetTelehikaya(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {integer} integer 1
-// @Failure 400 {object} ErrorResponse
+// @Failure 400,404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Failure default {object} ErrorResponse
 // @Router /horor [get]
@@ -150,7 +150,7 @@ func Horor(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {integer} integer 1
-// @Failure 400 {object} ErrorResponse
+// @Failure 400,404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Failure default {object} ErrorResponse
 // @Router /anime [get]

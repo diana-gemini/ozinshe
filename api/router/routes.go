@@ -28,7 +28,6 @@ func GetRoute(r *gin.Engine) {
 	r.GET("/all", controllers.GetAllMovies)
 	r.GET("/movie/:id", controllers.GetMovieByID)
 	r.GET("/movie/:id/series/:seasonid/:seriesid", controllers.GetMovieSeriesByID)
-
 	r.POST("/movie/:id/favorite", controllers.AddMovieToFavorite)
 	r.DELETE("/movie/:id/favorite", controllers.DeleteMovieFromFavorite)
 	r.GET("/movie/favorite", controllers.GetAllFavoriteMovies)

@@ -2,11 +2,12 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
+
 	"github.com/diana-gemini/ozinshe/db/initializers"
 	"github.com/diana-gemini/ozinshe/internal/helpers"
 	"github.com/diana-gemini/ozinshe/internal/models"
 	"github.com/diana-gemini/ozinshe/internal/validations"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,22 +17,35 @@ type FavoriteResponse struct {
 	MovieID uint
 }
 
+// AddMovieToFavorite godoc
+// @Summary AddMovieToFavorite
+// @Security ApiKeyAuth
+// @Tags movie-controller
+// @ID add-movie-to-favorite
+// @Accept  json
+// @Produce  json
+// @Param id path integer true "movieID"
+// @Success 200 {integer} integer 1
+// @Failure 400,404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /movie/{id}/favorite [post]
 func AddMovieToFavorite(c *gin.Context) {
 	authUser := helpers.GetAuthUser(c)
-	movieIDFromParam := c.Param("id")
 
-	movieID, err := strconv.Atoi(movieIDFromParam)
+	movieID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": err,
-		})
+		NewErrorResponse(c, http.StatusNotFound, "cannot convert movieID to int ")
+		return
+	}
+
+	if !validations.IsExistValue("movies", "id", movieID) {
+		NewErrorResponse(c, http.StatusBadRequest, "movie id not found")
 		return
 	}
 
 	if validations.IsUniqueTwoValue("favorites", "user_id", "movie_id", authUser.ID, uint(movieID)) {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"UniqueValue": "This favorite movie is already exist!",
-		})
+		NewErrorResponse(c, http.StatusBadRequest, "this favorite movie is already exist")
 		return
 	}
 
@@ -42,9 +56,7 @@ func AddMovieToFavorite(c *gin.Context) {
 
 	result := initializers.DB.Create(&favoriteMovie)
 	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Cannot create favorite movie",
-		})
+		NewErrorResponse(c, http.StatusInternalServerError, "cannot create favorite movie")
 		return
 	}
 
@@ -54,6 +66,19 @@ func AddMovieToFavorite(c *gin.Context) {
 	})
 }
 
+// DeleteMovieFromFavorite godoc
+// @Summary DeleteMovieFromFavorite
+// @Security ApiKeyAuth
+// @Tags movie-controller
+// @ID delete-movie-from-favorite
+// @Accept  json
+// @Produce  json
+// @Param id path integer true "movieID"
+// @Success 200 {integer} integer 1
+// @Failure 400,404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /movie/{id}/favorite [delete]
 func DeleteMovieFromFavorite(c *gin.Context) {
 	authUser := helpers.GetAuthUser(c)
 	movieID := c.Param("id")
@@ -62,9 +87,7 @@ func DeleteMovieFromFavorite(c *gin.Context) {
 
 	result := initializers.DB.Where("movie_id = ? AND user_id = ?", movieID, authUser.ID).First(&favorite)
 	if err := result.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": err,
-		})
+		NewErrorResponse(c, http.StatusNotFound, "user favorite movie is not found")
 		return
 	}
 
@@ -75,15 +98,25 @@ func DeleteMovieFromFavorite(c *gin.Context) {
 	})
 }
 
+// GetAllFavoriteMovies godoc
+// @Summary GetAllFavoriteMovies
+// @Security ApiKeyAuth
+// @Tags movie-controller
+// @ID get-all-favorite-movies
+// @Accept  json
+// @Produce  json
+// @Success 200 {integer} integer 1
+// @Failure 400,404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /movie/favorite [get]
 func GetAllFavoriteMovies(c *gin.Context) {
 	user := helpers.GetAuthUser(c)
 	var favoriteMovies []models.Favorite
 	result := initializers.DB.Where("user_id = ?", user.ID).Find(&favoriteMovies)
 
 	if err := result.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"movie": "Record not found",
-		})
+		NewErrorResponse(c, http.StatusNotFound, "favorite movie is not found")
 		return
 	}
 

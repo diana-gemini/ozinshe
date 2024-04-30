@@ -19,7 +19,7 @@ import (
 // @Produce json
 // @Param search query string true "search param received in the URL"
 // @Success 200 {integer} integer 1
-// @Failure 400 {object} ErrorResponse
+// @Failure 400,404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Failure default {object} ErrorResponse
 // @Router /search [get]
