@@ -50,9 +50,12 @@ func GetRoute(r *gin.Engine) {
 		admin.PUT("/agecategory/:id/update", controllers.UpdateAgeCategory)
 		admin.DELETE("/agecategory/:id/delete", controllers.DeleteAgeCategory)
 
+		//
 		admin.POST("/movie/:id/season/create", controllers.CreateSeason)
+		admin.GET("/movie/:id/season/:seasonid/edit", controllers.EditSeason)
 		admin.PUT("/movie/:id/season/:seasonid/update", controllers.UpdateSeason)
 		admin.DELETE("/movie/:id/season/:seasonid/delete", controllers.DeleteSeason)
+		//
 
 		admin.POST("/movie/create", controllers.CreateMovie)
 		admin.GET("/movie/:id/edit", controllers.EditMovie)

@@ -426,6 +426,98 @@ paths:
       summary: CreateCategory
       tags:
       - admin-movie-category-controller
+  /admin/movie/{id}/season/{seasonid}/edit:
+    get:
+      consumes:
+      - application/json
+      operationId: edit-season
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: seasonid
+        in: path
+        name: seasonid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: EditSeason
+      tags:
+      - admin-movie-season-controller
+  /admin/movie/{id}/season/create:
+    post:
+      consumes:
+      - multipart/form-data
+      operationId: create-season
+      parameters:
+      - description: movieID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - collectionFormat: csv
+        example:
+        - video link
+        in: formData
+        items:
+          type: string
+        name: videos
+        required: true
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: CreateSeason
+      tags:
+      - admin-movie-season-controller
   /admin/type/{id}/delete:
     delete:
       consumes:
