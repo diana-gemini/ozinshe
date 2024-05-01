@@ -121,6 +121,6 @@ func DeleteAgeCategory(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "The age category has been deleted successfully",
+		"message": "age category delete successfully",
 	})
 }

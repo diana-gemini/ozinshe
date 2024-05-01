@@ -168,6 +168,6 @@ func DeleteCategory(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "The category has been deleted successfully",
+		"message": "category delete successfully",
 	})
 }

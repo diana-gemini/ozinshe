@@ -94,7 +94,7 @@ func DeleteMovieFromFavorite(c *gin.Context) {
 	initializers.DB.Unscoped().Delete(&favorite)
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "The favorite movie has been deleted successfully",
+		"message": "favorite movie delete successfully",
 	})
 }
 

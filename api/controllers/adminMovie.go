@@ -371,6 +371,6 @@ func DeleteMovie(c *gin.Context) {
 	initializers.DB.Unscoped().Delete(&favorite)
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "The movie has been deleted successfully",
+		"message": "movie delete successfully",
 	})
 }

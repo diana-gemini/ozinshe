@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+
 	"github.com/diana-gemini/ozinshe/db/initializers"
 	"github.com/diana-gemini/ozinshe/internal/models"
 	"github.com/diana-gemini/ozinshe/internal/validations"
@@ -9,24 +10,33 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type NewType struct {
+	TypeName string `json:"typeName" binding:"required,min=2" example:"Serial"`
+}
+
+// CreateTypeOfProject godoc
+// @Summary CreateTypeOfProject
+// @Security ApiKeyAuth
+// @Tags admin-movie-type-controller
+// @ID create-type
+// @Accept  json
+// @Produce  json
+// @Param typeName body NewType true "typeName"
+// @Success 200 {integer} integer 1
+// @Failure 400,404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /admin/type/create [post]
 func CreateTypeOfProject(c *gin.Context) {
-	var userInput struct {
-		TypeName string `json:"TypeName" binding:"required,min=2"`
-	}
+	var userInput NewType
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		NewErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
 	if validations.IsUniqueValue("types", "type_name", userInput.TypeName) {
-		c.JSON(http.StatusConflict, gin.H{
-			"validations": map[string]interface{}{
-				"Name": "The type name is already exist!",
-			},
-		})
+		NewErrorResponse(c, http.StatusConflict, "the type name is already exist")
 		return
 	}
 
@@ -37,10 +47,7 @@ func CreateTypeOfProject(c *gin.Context) {
 	result := initializers.DB.Create(&typeOfProject)
 
 	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Cannot create category",
-		})
-
+		NewErrorResponse(c, http.StatusInternalServerError, "cannot create category")
 		return
 	}
 
@@ -49,26 +56,61 @@ func CreateTypeOfProject(c *gin.Context) {
 	})
 }
 
+// EditTypeOfProject godoc
+// @Summary EditTypeOfProject
+// @Security ApiKeyAuth
+// @Tags admin-movie-type-controller
+// @ID edit-type
+// @Accept  json
+// @Produce  json
+// @Param id path integer true "id"
+// @Success 200 {integer} integer 1
+// @Failure 400,404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /admin/type/{id}/edit [get]
+func EditTypeOfProject(c *gin.Context) {
+	id := c.Param("id")
+
+	var typeOfProject models.Type
+	result := initializers.DB.First(&typeOfProject, id)
+
+	if err := result.Error; err != nil {
+		NewErrorResponse(c, http.StatusNotFound, "type not found")
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"type": typeOfProject,
+	})
+}
+
+// UpdateTypeOfProject godoc
+// @Summary UpdateTypeOfProject
+// @Security ApiKeyAuth
+// @Tags admin-movie-type-controller
+// @ID update-type
+// @Accept  json
+// @Produce  json
+// @Param id path integer true "id"
+// @Param typeName body NewType true "typeName"
+// @Success 200 {integer} integer 1
+// @Failure 400,404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /admin/type/{id}/update [put]
 func UpdateTypeOfProject(c *gin.Context) {
 	id := c.Param("id")
 
-	var userInput struct {
-		TypeName string `json:"TypeName" binding:"required,min=2"`
-	}
+	var userInput NewType
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		NewErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
 	if validations.IsUniqueValue("types", "type_name", userInput.TypeName) {
-		c.JSON(http.StatusConflict, gin.H{
-			"validations": map[string]interface{}{
-				"Name": "The type name is already exist!",
-			},
-		})
+		NewErrorResponse(c, http.StatusConflict, "the type name is already exist")
 		return
 	}
 
@@ -76,9 +118,7 @@ func UpdateTypeOfProject(c *gin.Context) {
 	result := initializers.DB.First(&typeOfProject, id)
 
 	if err := result.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": err,
-		})
+		NewErrorResponse(c, http.StatusNotFound, "cannot find type")
 		return
 	}
 
@@ -89,9 +129,7 @@ func UpdateTypeOfProject(c *gin.Context) {
 	result = initializers.DB.Model(&typeOfProject).Updates(&updateTypeOfProject)
 
 	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Cannot update type",
-		})
+		NewErrorResponse(c, http.StatusInternalServerError, "cannot update type")
 		return
 	}
 
@@ -100,27 +138,36 @@ func UpdateTypeOfProject(c *gin.Context) {
 	})
 }
 
+// DeleteTypeOfProject godoc
+// @Summary DeleteTypeOfProject
+// @Security ApiKeyAuth
+// @Tags admin-movie-type-controller
+// @ID delete-type
+// @Accept  json
+// @Produce  json
+// @Param id path integer true "id"
+// @Success 200 {integer} integer 1
+// @Failure 400,404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /admin/type/{id}/delete [delete]
 func DeleteTypeOfProject(c *gin.Context) {
 	id := c.Param("id")
 	var typeOfProject models.Type
 
 	result := initializers.DB.First(&typeOfProject, id)
 	if err := result.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": err,
-		})
+		NewErrorResponse(c, http.StatusNotFound, "cannot find type")
 		return
 	}
 
 	err := initializers.DB.Delete(&typeOfProject).Error
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": err,
-		})
+		NewErrorResponse(c, http.StatusNotFound, "cannot find type")
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "The type has been deleted successfully",
+		"message": "type delete successfully",
 	})
 }

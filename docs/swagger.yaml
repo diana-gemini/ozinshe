@@ -26,6 +26,15 @@ definitions:
     required:
     - categoryName
     type: object
+  controllers.NewType:
+    properties:
+      typeName:
+        example: Serial
+        minLength: 2
+        type: string
+    required:
+    - typeName
+    type: object
   controllers.RecoverUserPassword:
     properties:
       email:
@@ -245,6 +254,169 @@ paths:
       summary: CreateCategory
       tags:
       - admin-category-controller
+  /admin/type/{id}/delete:
+    delete:
+      consumes:
+      - application/json
+      operationId: delete-type
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: DeleteTypeOfProject
+      tags:
+      - admin-movie-type-controller
+  /admin/type/{id}/edit:
+    get:
+      consumes:
+      - application/json
+      operationId: edit-type
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: EditTypeOfProject
+      tags:
+      - admin-movie-type-controller
+  /admin/type/{id}/update:
+    put:
+      consumes:
+      - application/json
+      operationId: update-type
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: typeName
+        in: body
+        name: typeName
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.NewType'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: UpdateTypeOfProject
+      tags:
+      - admin-movie-type-controller
+  /admin/type/create:
+    post:
+      consumes:
+      - application/json
+      operationId: create-type
+      parameters:
+      - description: typeName
+        in: body
+        name: typeName
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.NewType'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: CreateTypeOfProject
+      tags:
+      - admin-movie-type-controller
   /all:
     get:
       consumes:

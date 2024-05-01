@@ -40,23 +40,22 @@ func GetRoute(r *gin.Engine) {
 		admin.PUT("/category/:id/update", controllers.UpdateCategory)
 		admin.DELETE("/category/:id/delete", controllers.DeleteCategory)
 
-		//
-
-		admin.POST("/movie/create", controllers.CreateMovie)
-		admin.GET("/movie/:id/edit", controllers.EditMovie)
-		admin.PUT("/movie/:id/update", controllers.UpdateMovie)
-		admin.DELETE("/movie/:id/delete", controllers.DeleteMovie)
-
-		admin.POST("/movie/:id/season/create", controllers.CreateSeason)
-		admin.PUT("/movie/:id/season/:seasonid/update", controllers.UpdateSeason)
-		admin.DELETE("/movie/:id/season/:seasonid/delete", controllers.DeleteSeason)
-
 		admin.POST("/type/create", controllers.CreateTypeOfProject)
+		admin.GET("/type/:id/edit", controllers.EditTypeOfProject)
 		admin.PUT("/type/:id/update", controllers.UpdateTypeOfProject)
 		admin.DELETE("/type/:id/delete", controllers.DeleteTypeOfProject)
 
 		admin.POST("/agecategory/create", controllers.CreateAgeCategory)
 		admin.PUT("/agecategory/:id/update", controllers.UpdateAgeCategory)
 		admin.DELETE("/agecategory/:id/delete", controllers.DeleteAgeCategory)
+
+		admin.POST("/movie/:id/season/create", controllers.CreateSeason)
+		admin.PUT("/movie/:id/season/:seasonid/update", controllers.UpdateSeason)
+		admin.DELETE("/movie/:id/season/:seasonid/delete", controllers.DeleteSeason)
+
+		admin.POST("/movie/create", controllers.CreateMovie)
+		admin.GET("/movie/:id/edit", controllers.EditMovie)
+		admin.PUT("/movie/:id/update", controllers.UpdateMovie)
+		admin.DELETE("/movie/:id/delete", controllers.DeleteMovie)
 	}
 }

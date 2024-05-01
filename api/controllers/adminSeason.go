@@ -175,6 +175,6 @@ func DeleteSeason(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "The season and video has been deleted successfully",
+		"message": "season and video delete successfully",
 	})
 }
