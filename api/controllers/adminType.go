@@ -109,16 +109,16 @@ func UpdateTypeOfProject(c *gin.Context) {
 		return
 	}
 
-	if validations.IsUniqueValue("types", "type_name", userInput.TypeName) {
-		NewErrorResponse(c, http.StatusConflict, "the type name is already exist")
-		return
-	}
-
 	var typeOfProject models.Type
 	result := initializers.DB.First(&typeOfProject, id)
 
 	if err := result.Error; err != nil {
 		NewErrorResponse(c, http.StatusNotFound, "cannot find type")
+		return
+	}
+
+	if validations.IsUniqueValue("types", "type_name", userInput.TypeName) {
+		NewErrorResponse(c, http.StatusConflict, "the type name is already exist")
 		return
 	}
 

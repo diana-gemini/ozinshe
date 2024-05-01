@@ -17,7 +17,7 @@ type NewCategory struct {
 // CreateCategory godoc
 // @Summary CreateCategory
 // @Security ApiKeyAuth
-// @Tags admin-category-controller
+// @Tags admin-movie-category-controller
 // @ID create-category
 // @Accept  json
 // @Produce  json
@@ -59,7 +59,7 @@ func CreateCategory(c *gin.Context) {
 // EditCategory godoc
 // @Summary EditCategory
 // @Security ApiKeyAuth
-// @Tags admin-category-controller
+// @Tags admin-movie-category-controller
 // @ID edit-category
 // @Accept  json
 // @Produce  json
@@ -88,7 +88,7 @@ func EditCategory(c *gin.Context) {
 // UpdateCategory godoc
 // @Summary UpdateCategory
 // @Security ApiKeyAuth
-// @Tags admin-category-controller
+// @Tags admin-movie-category-controller
 // @ID update-category
 // @Accept  json
 // @Produce  json
@@ -109,16 +109,16 @@ func UpdateCategory(c *gin.Context) {
 		return
 	}
 
-	if validations.IsUniqueValue("categories", "category_name", userInput.CategoryName) {
-		NewErrorResponse(c, http.StatusConflict, "the category name is already exist")
-		return
-	}
-
 	var category models.Category
 	result := initializers.DB.First(&category, id)
 
 	if err := result.Error; err != nil {
 		NewErrorResponse(c, http.StatusInternalServerError, "cannot find category")
+		return
+	}
+
+	if validations.IsUniqueValue("categories", "category_name", userInput.CategoryName) {
+		NewErrorResponse(c, http.StatusConflict, "the category name is already exist")
 		return
 	}
 
@@ -141,7 +141,7 @@ func UpdateCategory(c *gin.Context) {
 // DeleteCategory godoc
 // @Summary DeleteCategory
 // @Security ApiKeyAuth
-// @Tags admin-category-controller
+// @Tags admin-movie-category-controller
 // @ID delete-category
 // @Accept  json
 // @Produce  json

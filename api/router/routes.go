@@ -46,6 +46,7 @@ func GetRoute(r *gin.Engine) {
 		admin.DELETE("/type/:id/delete", controllers.DeleteTypeOfProject)
 
 		admin.POST("/agecategory/create", controllers.CreateAgeCategory)
+		admin.GET("/agecategory/:id/edit", controllers.EditAgeCategory)
 		admin.PUT("/agecategory/:id/update", controllers.UpdateAgeCategory)
 		admin.DELETE("/agecategory/:id/delete", controllers.DeleteAgeCategory)
 

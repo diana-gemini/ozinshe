@@ -17,6 +17,15 @@ definitions:
       message:
         type: string
     type: object
+  controllers.NewAgeCategory:
+    properties:
+      ageCategoryName:
+        example: 0-13
+        minLength: 2
+        type: string
+    required:
+    - ageCategoryName
+    type: object
   controllers.NewCategory:
     properties:
       categoryName:
@@ -91,6 +100,169 @@ info:
   title: Ozinwe API
   version: "1.0"
 paths:
+  /admin/agecategory/{id}/delete:
+    delete:
+      consumes:
+      - application/json
+      operationId: delete-age-category
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: DeleteAgeCategory
+      tags:
+      - admin-movie-age-category-controller
+  /admin/agecategory/{id}/edit:
+    get:
+      consumes:
+      - application/json
+      operationId: edit-age-category
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: EditAgeCategory
+      tags:
+      - admin-movie-age-category-controller
+  /admin/agecategory/{id}/update:
+    put:
+      consumes:
+      - application/json
+      operationId: update-age-category
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ageCategoryName
+        in: body
+        name: ageCategoryName
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.NewAgeCategory'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: UpdateAgeCategory
+      tags:
+      - admin-movie-age-category-controller
+  /admin/agecategory/create:
+    post:
+      consumes:
+      - application/json
+      operationId: create-age-category
+      parameters:
+      - description: ageCategoryName
+        in: body
+        name: ageCategoryName
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.NewAgeCategory'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: CreateAgeCategory
+      tags:
+      - admin-movie-age-category-controller
   /admin/category/{id}/delete:
     delete:
       consumes:
@@ -129,7 +301,7 @@ paths:
       - ApiKeyAuth: []
       summary: DeleteCategory
       tags:
-      - admin-category-controller
+      - admin-movie-category-controller
   /admin/category/{id}/edit:
     get:
       consumes:
@@ -168,7 +340,7 @@ paths:
       - ApiKeyAuth: []
       summary: EditCategory
       tags:
-      - admin-category-controller
+      - admin-movie-category-controller
   /admin/category/{id}/update:
     put:
       consumes:
@@ -213,7 +385,7 @@ paths:
       - ApiKeyAuth: []
       summary: UpdateCategory
       tags:
-      - admin-category-controller
+      - admin-movie-category-controller
   /admin/category/create:
     post:
       consumes:
@@ -253,7 +425,7 @@ paths:
       - ApiKeyAuth: []
       summary: CreateCategory
       tags:
-      - admin-category-controller
+      - admin-movie-category-controller
   /admin/type/{id}/delete:
     delete:
       consumes:
