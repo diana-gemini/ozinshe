@@ -20,15 +20,15 @@ func init() {
 func main() {
 	//follow code delete table from DB
 
-	err := initializers.DB.Migrator().DropTable(models.User{}, models.Movie{},
-		models.Favorite{}, models.Category{}, models.Season{}, models.Type{}, models.AgeCategory{},
-		models.Video{}, models.Screenshot{}, "movie_category")
+	// err := initializers.DB.Migrator().DropTable(models.User{}, models.Movie{},
+	// 	models.Favorite{}, models.Category{}, models.Season{}, models.Type{}, models.AgeCategory{},
+	// 	models.Video{}, models.Screenshot{}, "movie_category")
 
-	if err != nil {
-		log.Fatal("Table dropping failed")
-	}
+	// if err != nil {
+	// 	log.Fatal("Table dropping failed")
+	// }
 
-	err = initializers.DB.AutoMigrate(models.User{}, models.AgeCategory{}, models.Category{}, models.Season{},
+	err := initializers.DB.AutoMigrate(models.User{}, models.AgeCategory{}, models.Category{}, models.Season{},
 		models.Type{}, models.Movie{}, models.Screenshot{}, models.Favorite{}, models.Video{})
 
 	if err != nil {
