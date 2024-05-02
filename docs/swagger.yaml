@@ -426,6 +426,84 @@ paths:
       summary: CreateCategory
       tags:
       - admin-movie-category-controller
+  /admin/movie/{id}/delete:
+    delete:
+      consumes:
+      - multipart/form-data
+      operationId: delete-movie
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: DeleteMovie
+      tags:
+      - admin-movie-controller
+  /admin/movie/{id}/edit:
+    get:
+      consumes:
+      - multipart/form-data
+      operationId: edit-movie
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: EditMovie
+      tags:
+      - admin-movie-controller
   /admin/movie/{id}/season/{seasonid}/delete:
     delete:
       consumes:
@@ -615,6 +693,131 @@ paths:
       summary: CreateSeason
       tags:
       - admin-movie-season-controller
+  /admin/movie/{id}/update:
+    put:
+      consumes:
+      - multipart/form-data
+      operationId: update-movie
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: field 4
+        example: 13-17
+        in: formData
+        name: ageCategoryID
+        required: true
+        type: string
+      - collectionFormat: csv
+        description: field 2
+        example:
+        - "1"
+        in: formData
+        items:
+          type: string
+        name: categoriesID
+        required: true
+        type: array
+      - description: field 8
+        example: Konec XX veka. Neskolko let ...
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: field 9
+        example: Tomokadzu Tokoro, Hideki Tonokacu
+        in: formData
+        name: director
+        required: true
+        type: string
+      - description: field 7
+        example: Film, Horor, Anime
+        in: formData
+        name: keywords
+        required: true
+        type: string
+      - description: field 1
+        example: Hellsing
+        in: formData
+        name: nameOfProject
+        required: true
+        type: string
+      - description: field 10
+        example: Satosi Fudzii, Yosiyuki Fudetani
+        in: formData
+        name: producer
+        required: true
+        type: string
+      - description: field 6
+        example: "89"
+        in: formData
+        name: timing
+        required: true
+        type: string
+      - description: field 3
+        example: "1"
+        in: formData
+        name: typeID
+        required: true
+        type: string
+      - description: field 5
+        example: "2001"
+        in: formData
+        name: year
+        required: true
+        type: string
+      - collectionFormat: multi
+        description: screenshots
+        in: formData
+        items:
+          type: file
+        name: screenshots
+        required: true
+        type: array
+      - collectionFormat: csv
+        example:
+        - video link
+        in: formData
+        items:
+          type: string
+        name: videos
+        required: true
+        type: array
+      - description: cover
+        in: formData
+        name: cover
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: UpdateMovie
+      tags:
+      - admin-movie-controller
   /admin/movie/create:
     post:
       consumes:

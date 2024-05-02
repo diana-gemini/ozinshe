@@ -191,21 +191,32 @@ func CreateMovie(c *gin.Context) {
 	})
 }
 
+// EditMovie godoc
+// @Summary EditMovie
+// @Security ApiKeyAuth
+// @Tags admin-movie-controller
+// @ID edit-movie
+// @Accept multipart/form-data
+// @Produce json
+// @Param id path integer true "id"
+// @Success 200 {integer} integer 1
+// @Failure 400,404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /admin/movie/{id}/edit [get]
 func EditMovie(c *gin.Context) {
 	id := c.Param("id")
 
 	var movie models.Movie
-	result := initializers.DB.Preload("Screenshots").
-		Preload("AgeCategories").
+	result := initializers.DB.Preload("Categories").
+		Preload("Screenshots").
 		Preload("Seasons", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Videos")
 		}).
 		First(&movie, id)
 
 	if err := result.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"movie": "Record not found",
-		})
+		NewErrorResponse(c, http.StatusNotFound, "movie not found")
 		return
 	}
 
@@ -214,65 +225,111 @@ func EditMovie(c *gin.Context) {
 	})
 }
 
+// UpdateMovie godoc
+// @Summary UpdateMovie
+// @Security ApiKeyAuth
+// @Tags admin-movie-controller
+// @ID update-movie
+// @Accept multipart/form-data
+// @Produce json
+// @Param id path integer true "id"
+// @Param newMovie formData NewMovie true "newMovie"
+// @Param screenshots formData []file true "screenshots" collectionFormat(multi) "Image files to upload"
+// @Param seasons formData NewSeason true "seasons"
+// @Param cover formData file true "cover"
+// @Success 200 {integer} integer 1
+// @Failure 400,404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /admin/movie/{id}/update [put]
 func UpdateMovie(c *gin.Context) {
 	id := c.Param("id")
 
-	nameOfProject := c.PostForm("nameOfProject")
-	categoriesArray := c.PostFormArray("categories")
-	typeID := c.PostForm("typeID")
-	ageCategoryID := c.PostForm("ageCategoryID")
-	//screenshotsArray := c.PostFormArray("screenshots")
-	year := c.PostForm("year")
-	timing := c.PostForm("timing")
-	keywords := c.PostForm("keywords")
-	description := c.PostForm("description")
-	director := c.PostForm("director")
-	producer := c.PostForm("producer")
-	cover := c.PostForm("cover")
+	var newMovie NewMovie
 
-	if validations.IsUniqueValue("movies", "name_of_project", nameOfProject) {
-		c.JSON(http.StatusConflict, gin.H{
-			"Name": "The name of movie is already exist!",
-		})
+	if err := c.ShouldBind(&newMovie); err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
+	if validations.IsUniqueValue("movies", "name_of_project", newMovie.NameOfProject) {
+		NewErrorResponse(c, http.StatusConflict, "movie is already exist")
+		return
+	}
+
+	categoriesArray := strings.Split(newMovie.CategoriesID[0], ",")
+
 	var categories []models.Category
-
-	for _, category := range categoriesArray {
-		if !validations.IsExistValue("categories", "id", category) {
-			c.JSON(http.StatusUnprocessableEntity, gin.H{
-				"CategoryID": "The category does not exist!",
-			})
+	for _, categoryID := range categoriesArray {
+		if !validations.IsExistValue("categories", "id", categoryID) {
+			NewErrorResponse(c, http.StatusBadRequest, "category does not exist")
 			return
 		}
 
-		id, err := strconv.Atoi(category)
+		id, err := strconv.Atoi(categoryID)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err,
-			})
+			NewErrorResponse(c, http.StatusBadRequest, "cannot convert categogy ID to int")
 			return
 		}
+
 		var tempCategory models.Category
 		if err = initializers.DB.First(&tempCategory, id).Error; err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err,
-			})
+			NewErrorResponse(c, http.StatusBadRequest, "cannot find category")
 			return
 		}
 
 		categories = append(categories, tempCategory)
 	}
 
-	if !validations.IsExistValue("types", "id", typeID) {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"TypeID": "The type does not exist!",
-		})
+	if !validations.IsExistValue("types", "id", newMovie.TypeID) {
+		NewErrorResponse(c, http.StatusBadRequest, "type does not exist")
 		return
 	}
 
-	typeIDInt, err := strconv.Atoi(typeID)
+	typeIDInt, err := strconv.Atoi(newMovie.TypeID)
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, "cannot convert type ID to int")
+		return
+	}
+
+	if !validations.IsExistValue("age_categories", "id", newMovie.AgeCategoryID) {
+		NewErrorResponse(c, http.StatusBadRequest, "age category does not exist")
+		return
+	}
+
+	ageCategoryIDInt, err := strconv.Atoi(newMovie.AgeCategoryID)
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, "cannot convert age category ID to int")
+		return
+	}
+
+	err = c.Request.ParseMultipartForm(10 << 20)
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, "failed to parse form")
+		return
+	}
+
+	form := c.Request.MultipartForm
+
+	screenshotsArray := form.File["screenshots"]
+
+	screenshotsURL, err := ImageUpload(c, screenshotsArray)
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, "cannot file upload")
+		return
+	}
+
+	var screenshots []models.Screenshot
+
+	for _, screenshotURL := range screenshotsURL {
+		screenshot := models.Screenshot{
+			Link: screenshotURL,
+		}
+		screenshots = append(screenshots, screenshot)
+	}
+
+	cover := form.File["cover"]
+	coverURL, err := ImageUpload(c, cover)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err,
@@ -280,59 +337,65 @@ func UpdateMovie(c *gin.Context) {
 		return
 	}
 
-	if !validations.IsExistValue("age_categories", "id", ageCategoryID) {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"AgeCategoryID": "The age category does not exist!",
-		})
+	if len(coverURL) < 1 {
+		NewErrorResponse(c, http.StatusBadRequest, "cover is not found")
 		return
 	}
 
-	ageCategoryIDInt, err := strconv.Atoi(ageCategoryID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err,
-		})
+	var newSeason NewSeason
+	if err := c.ShouldBind(&newSeason); err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
+
+	videosArray := strings.Split(newSeason.Videos[0], ",")
+
+	var videos []models.Video
+
+	for _, video := range videosArray {
+		tempVideo := models.Video{
+			Link: video,
+		}
+		videos = append(videos, tempVideo)
+	}
+
+	season := models.Season{
+		Videos: videos,
+	}
+	var seasons []models.Season
+	seasons = append(seasons, season)
 
 	var movie models.Movie
 	result := initializers.DB.First(&movie, id)
 
 	if err := result.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": err,
-		})
+		NewErrorResponse(c, http.StatusNotFound, "movie not found")
 		return
 	}
 
 	updateMovie := models.Movie{
-		NameOfProject: nameOfProject,
+		NameOfProject: newMovie.NameOfProject,
 		Categories:    categories,
 		TypeID:        uint(typeIDInt),
 		AgeCategoryID: uint(ageCategoryIDInt),
-		//Screenshots:   screenshots,
-		Year:        year,
-		Timing:      timing,
-		Keywords:    keywords,
-		Description: description,
-		Director:    director,
-		Producer:    producer,
-		Cover:       cover,
+		Screenshots:   screenshots,
+		Year:          newMovie.Year,
+		Timing:        newMovie.Timing,
+		Keywords:      newMovie.Keywords,
+		Description:   newMovie.Description,
+		Director:      newMovie.Director,
+		Producer:      newMovie.Producer,
+		Cover:         coverURL[0],
+		Seasons:       seasons,
 	}
 
 	if err := initializers.DB.Model(&movie).Association("Categories").Replace(updateMovie.Categories); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		NewErrorResponse(c, http.StatusInternalServerError, "cannot replace association")
 		return
 	}
 
-	result = initializers.DB.Model(&movie).Updates(&updateMovie)
-
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": result.Error,
-		})
+	if err := initializers.DB.Model(&movie).Updates(&updateMovie).Error; err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, "cannot update movie")
 		return
 	}
 
@@ -341,23 +404,31 @@ func UpdateMovie(c *gin.Context) {
 	})
 }
 
+// DeleteMovie godoc
+// @Summary DeleteMovie
+// @Security ApiKeyAuth
+// @Tags admin-movie-controller
+// @ID delete-movie
+// @Accept multipart/form-data
+// @Produce json
+// @Param id path integer true "id"
+// @Success 200 {integer} integer 1
+// @Failure 400,404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Failure default {object} ErrorResponse
+// @Router /admin/movie/{id}/delete [delete]
 func DeleteMovie(c *gin.Context) {
 	id := c.Param("id")
 	var movie models.Movie
 
-	result := initializers.DB.First(&movie, id)
-	if err := result.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": err,
-		})
+	if err := initializers.DB.First(&movie, id).Error; err != nil {
+		NewErrorResponse(c, http.StatusNotFound, "movie not found")
 		return
 	}
 
 	err := initializers.DB.Delete(&movie).Error
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": err,
-		})
+		NewErrorResponse(c, http.StatusNotFound, "failed delete movie")
 		return
 	}
 
@@ -365,9 +436,7 @@ func DeleteMovie(c *gin.Context) {
 
 	resultFavorite := initializers.DB.Where("movie_id = ?", id).Find(&favorite)
 	if err := resultFavorite.Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": err,
-		})
+		NewErrorResponse(c, http.StatusNotFound, "favorite movie not found")
 		return
 	}
 
